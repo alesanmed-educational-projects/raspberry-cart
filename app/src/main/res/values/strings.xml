@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Acmezon-Dash</string>
+    <string name="bluetooth_title">Connect to chosen device</string>
+    <string name="bluetooth_connect">Connect</string>
+    <string name="bluetooth_loading">Connecting...</string>
+    <string name="cancel">Cancel</string>
+    <string name="bluetooth_connected">Connection made successfully</string>
+    <string name="bluetooth_cant_connect">Impossible to connect</string>
+</resources>
