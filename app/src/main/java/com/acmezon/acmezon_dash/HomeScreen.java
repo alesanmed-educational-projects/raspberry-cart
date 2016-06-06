@@ -1,6 +1,5 @@
 package com.acmezon.acmezon_dash;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -12,9 +11,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -36,6 +40,7 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
     private DeviceItemListAdapter mAdapter;
     private ArrayList<DeviceItem> deviceItemList;
     private ConnectThread connection;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static int REQUEST_BLUETOOTH = 1;
     private final BroadcastReceiver bReciever = new BroadcastReceiver() {
@@ -64,9 +69,11 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        deviceItemList = new ArrayList<DeviceItem>();
+        deviceItemList = new ArrayList<>();
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
         mAdapter = new DeviceItemListAdapter(this, android.R.layout.simple_list_item_1, deviceItemList);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) this.findViewById(R.id.devices_list_swipe);
         // Phone does not support Bluetooth so let the user know and exit.
         if (BTAdapter == null) {
             new AlertDialog.Builder(this)
@@ -84,36 +91,14 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
                 Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBT, REQUEST_BLUETOOTH);
             }
-            BTAdapter.startDiscovery();
 
-            Set<BluetoothDevice> pairedDevices = BTAdapter.getBondedDevices();
-            if (pairedDevices.size() > 0) {
-                for (BluetoothDevice device : pairedDevices) {
-                    DeviceItem newDevice= new DeviceItem(device.getName(),device.getAddress(),"false");
-                    Log.d("DEVICELIST", "DEVICE:" + newDevice.getDeviceName() + "\n");
-                    deviceItemList.add(newDevice);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-
-            // If there are no devices, add an item that states so. It will be handled in the view.
-            if(deviceItemList.size() == 0) {
-                Log.d("DEVICELIST", "NO DEVICES\n");
-            }
-
-
-            Log.d("DEVICELIST", "Adapter created\n");
             setListAdapter(mAdapter);
-            this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    DeviceItem device = (DeviceItem) parent.getItemAtPosition(position);
-                    Log.d("DEVICELIST", "DEVICE ITEM CLICKED: " + device.getDeviceName());
+                public void onRefresh() {
+                    Log.d("DEVICELISTSWIPE", "Has arrastrao el dedito. Mu bien miarma.");
 
-                    FragmentManager fm = getFragmentManager();
-                    ConnectDialog bluetoothDialog = ConnectDialog.newInstance(device);
-
-                    bluetoothDialog.show(fm, "Connect dialog");
+                    updateFromSwipe();
                 }
             });
         }
@@ -141,20 +126,25 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
                         UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
 
                 BTAdapter.cancelDiscovery();
-                Boolean res = connection.connect();
+                final Boolean res = connection.connect();
 
                 Log.d("DEVICECONNETION", "Connected to device " + ((ConnectDialog) dialog).getdName() + ": " + res);
                 loadingDialog.dismiss();
 
-                if (res) {
-                    Toast.makeText(getApplicationContext(),
-                            getResources().getString(R.string.bluetooth_connected),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getResources().getString(R.string.bluetooth_cant_connect),
-                            Toast.LENGTH_LONG).show();
-                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (res) {
+                            Toast.makeText(getApplicationContext(),
+                                    getResources().getString(R.string.bluetooth_connected),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    getResources().getString(R.string.bluetooth_cant_connect),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
         };
 
@@ -164,6 +154,71 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         Log.d("DEVICECONNETION", "Cancel");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.bluetooth_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.bluetooth_menu_refresh:
+                Log.i("DEVICELISTSWIPE", "Ya ni con er deito...");
+
+                if (!mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+
+                updateFromSwipe();
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateFromSwipe() {
+        Set<BluetoothDevice> pairedDevices = BTAdapter.getBondedDevices();
+        mAdapter.clear();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                DeviceItem newDevice= new DeviceItem(device.getName(),device.getAddress(),"false");
+                Log.d("DEVICELIST", "DEVICE:" + newDevice.getDeviceName() + "\n");
+                deviceItemList.add(newDevice);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+
+        // If there are no devices, add an item that states so. It will be handled in the view.
+        if(deviceItemList.size() == 0) {
+            Log.d("DEVICELIST", "NO DEVICES\n");
+        }
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(bReciever, filter);
+        BTAdapter.startDiscovery();
+
+        Log.d("DEVICELIST", "Adapter created\n");
+        this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DeviceItem device = (DeviceItem) parent.getItemAtPosition(position);
+                Log.d("DEVICELIST", "DEVICE ITEM CLICKED: " + device.getDeviceName());
+
+                FragmentManager fm = getFragmentManager();
+                ConnectDialog bluetoothDialog = ConnectDialog.newInstance(device);
+
+                bluetoothDialog.show(fm, "Connect dialog");
+            }
+        });
+
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

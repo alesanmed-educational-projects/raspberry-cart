@@ -6,4 +6,5 @@
     <string name="cancel">Cancel</string>
     <string name="bluetooth_connected">Connection made successfully</string>
     <string name="bluetooth_cant_connect">Impossible to connect</string>
+    <string name="bluetooth_menu_refresh">Search</string>
 </resources>
