@@ -15,12 +15,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ShoppingCart extends AppCompatActivity {
     private BufferedReader bluetoothReader;
+    private OutputStream bluetoothWriter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +30,48 @@ public class ShoppingCart extends AppCompatActivity {
         ConnectThread connection = ((Application) getApplication()).getConnection();
 
         Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
+
+        bluetoothListen(connection);
+        bluetoothWrite(connection);
+    }
+
+    private void bluetoothWrite(ConnectThread connection) {
+        try {
+            bluetoothWriter = connection.getbTSocket().getOutputStream();
+
+            Thread writeThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String text = "test\n";
+                    try {
+                        while (true) {
+                            bluetoothWriter.write(text.getBytes());
+                            Thread.sleep(1000L, 0);
+                        }
+                    } catch (IOException e) {
+                        Log.d("SHOPPINGCART", e.getMessage());
+                    } catch (InterruptedException e) {
+                        Log.d("SHOPPINGCART", e.getMessage());
+                    }
+                }
+            });
+
+            writeThread.start();
+        } catch (IOException e) {
+            close(bluetoothWriter);
+            Log.d("SHOPPINGCART", e.getMessage());
+        }
+    }
+
+    private void bluetoothListen(ConnectThread connection) {
         InputStream tmpStream;
         InputStreamReader tmpReader;
         try {
             tmpStream = connection.getbTSocket().getInputStream();
             tmpReader = new InputStreamReader(tmpStream);
             bluetoothReader = new BufferedReader(tmpReader);
+
+            bluetoothWriter = connection.getbTSocket().getOutputStream();
         } catch (IOException e) {
             close(bluetoothReader);
         }
@@ -57,20 +93,34 @@ public class ShoppingCart extends AppCompatActivity {
                             JSONObject productsJSON = new JSONObject(new_line);
                             String text = "";
 
-                            JSONObject products = ((JSONObject) productsJSON.get("products"));
-                            JSONObject barcodes = ((JSONObject) productsJSON.get("barcodes"));
-
-                            Iterator<String> productKeys = products.keys();
-                            Iterator<String> barcodesKeys = barcodes.keys();
-
-                            while(productKeys.hasNext()) {
-                                String key = productKeys.next();
-                                text += key + " - " + products.get(key) + "\n";
+                            JSONObject products = null;
+                            try{
+                                products = ((JSONObject) productsJSON.get("products"));
+                            } catch (JSONException e) {
+                                Log.d("SHOPPINGCART", e.getMessage());
                             }
 
-                            while(barcodesKeys.hasNext()) {
-                                String key = barcodesKeys.next();
-                                text += key + " - " + barcodes.get(key) + "\n";
+                            JSONObject barcodes = null;
+                            try{
+                                barcodes = ((JSONObject) productsJSON.get("barcodes"));
+                            }catch (JSONException e){
+                                Log.d("SHOPPINGCART", e.getMessage());
+                            }
+
+                            if(products != null) {
+                                Iterator<String> productKeys = products.keys();
+                                while (productKeys.hasNext()) {
+                                    String key = productKeys.next();
+                                    text += key + " - " + products.get(key) + "\n";
+                                }
+                            }
+
+                            if(barcodes != null) {
+                                Iterator<String> barcodesKeys = barcodes.keys();
+                                while (barcodesKeys.hasNext()) {
+                                    String key = barcodesKeys.next();
+                                    text += key + " - " + barcodes.get(key) + "\n";
+                                }
                             }
 
                             final String new_text = text;
@@ -83,7 +133,7 @@ public class ShoppingCart extends AppCompatActivity {
                         } catch (IOException e) {
                             Log.d("SHOPPINGCART", e.getMessage());
                         } catch (JSONException e) {
-                            Log.d("SHOPPINGCART", e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 }
