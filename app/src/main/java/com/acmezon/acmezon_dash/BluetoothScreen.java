@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDialogListener{
+public class BluetoothScreen extends ListActivity implements ConnectDialog.ConnectDialogListener{
     private BluetoothAdapter BTAdapter;
     private DeviceItemListAdapter mAdapter;
     private ArrayList<DeviceItem> deviceItemList;
@@ -74,6 +74,9 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
         mAdapter = new DeviceItemListAdapter(this, android.R.layout.simple_list_item_1, deviceItemList);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) this.findViewById(R.id.devices_list_swipe);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.loading_blue, R.color.loading_purple,
+                                                    R.color.loading_lime, R.color.loading_tea);
+
         // Phone does not support Bluetooth so let the user know and exit.
         if (BTAdapter == null) {
             new AlertDialog.Builder(this)
@@ -138,6 +141,10 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
                             Toast.makeText(getApplicationContext(),
                                     getResources().getString(R.string.bluetooth_connected),
                                     Toast.LENGTH_LONG).show();
+
+                            ((Application) getApplication()).setConnection(connection);
+                            Intent shoppingCart = new Intent(BluetoothScreen.this, ShoppingCart.class);
+                            startActivity(shoppingCart);
                         } else {
                             Toast.makeText(getApplicationContext(),
                                     getResources().getString(R.string.bluetooth_cant_connect),
@@ -239,7 +246,7 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
         client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
-                "HomeScreen Page", // TODO: Define a title for the content shown.
+                "BluetoothScreen Page", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.
@@ -258,7 +265,7 @@ public class HomeScreen extends ListActivity implements ConnectDialog.ConnectDia
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
-                "HomeScreen Page", // TODO: Define a title for the content shown.
+                "BluetoothScreen Page", // TODO: Define a title for the content shown.
                 // TODO: If you have web page content that matches this app activity's content,
                 // make sure this auto-generated web page URL is correct.
                 // Otherwise, set the URL to null.

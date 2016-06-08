@@ -29,6 +29,14 @@ public class ConnectThread extends Thread {
         bTSocket = tmp;
     }
 
+    public BluetoothDevice getbTDevice() {
+        return bTDevice;
+    }
+
+    public BluetoothSocket getbTSocket() {
+        return bTSocket;
+    }
+
     public boolean connect() {
 
         try {

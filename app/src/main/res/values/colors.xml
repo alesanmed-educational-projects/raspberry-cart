@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="loading_tea">#CD6C09</color>
+    <color name="loading_lime">#ABCD09</color>
+    <color name="loading_blue">#0943CD</color>
+    <color name="loading_purple">#CD0993</color>
 </resources>
