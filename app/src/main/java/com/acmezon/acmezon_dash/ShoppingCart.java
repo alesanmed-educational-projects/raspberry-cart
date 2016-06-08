@@ -1,8 +1,10 @@
 package com.acmezon.acmezon_dash;
 
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.acmezon.acmezon_dash.bluetooth.ConnectThread;
@@ -19,13 +21,22 @@ import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ShoppingCart extends AppCompatActivity {
+public class ShoppingCart extends ListActivity {
     private BufferedReader bluetoothReader;
+
+    private String languages[]=new String[]{"Java","PHP","Python","JavaScript","Ruby","C",
+            "Go","Perl","Pascal","Java","PHP","Python","JavaScript","Ruby","C","Java","PHP",
+            "Python","JavaScript","Ruby","C"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
+
+        this.setListAdapter(new ArrayAdapter<String>(
+                this, R.layout.product_row,
+                R.id.product_name,languages));
 
         ConnectThread connection = ((Application) getApplication()).getConnection();
 
