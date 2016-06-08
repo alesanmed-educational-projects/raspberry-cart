@@ -43,18 +43,14 @@ public class LoginActivity extends AppCompatActivity {
 
         final String color_error = "#ff4444";
 
-        List<String> credentials = retrieveCredentials();
-        if (credentials.size()>0) {
-            System.out.println(credentials.toArray());
-            email_view.setText(credentials.get(0));
-            password_view.setText(credentials.get(1));
-        } else {
-            System.out.println("No hay credenciales");
-        }
-
         final Drawable oldBackground = email_view.getBackground();
 
         shared = new SecurePreferences(this);
+        List<String> credentials = retrieveCredentials();
+        if (credentials.size()>0)  {
+            email_view.setText(credentials.get(0));
+            password_view.setText(credentials.get(1));
+        }
 
         submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,14 +88,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean launch_post_query(String email, String password) {
-        URL url;
+        storeCredentials(email, MD5(password));
+        return true;
+        /*URL url;
         HttpURLConnection connection = null;
 
         JSONObject params = new JSONObject();
-        System.out.println("Va a guardar ahora");
-        storeCredentials(email, MD5(password));
 
-        /*try {
+        try {
             params.put("email", email);
             params.put("password", MD5(password));
             storeCredentials(email, MD5(password));
@@ -156,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
                 connection.disconnect();
             }
         }*/
-        return true;
     }
 
     private String MD5 (String input) {
@@ -174,14 +169,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("EMAIL", email);
         editor.putString("PASSWORD", password);
         editor.clear();
-        editor.commit();
-        System.out.println("Va a guardar 2");
-        Toast.makeText(getApplicationContext(), "Guardado " + email + ", " + password, Toast.LENGTH_LONG);
-        System.out.println("Guardado");
-        List<String> r = retrieveCredentials();
-        for (String i : r){
-            System.out.println(i);
-        }
+        editor.apply();
     }
 
     private List<String> retrieveCredentials() {
