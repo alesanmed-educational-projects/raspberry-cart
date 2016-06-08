@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".BluetoothScreen">
+        <activity android:name=".BluetoothScreen"></activity>
+        <activity android:name=".ShoppingCart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +28,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <activity android:name=".ShoppingCart"></activity>
     </application>
 
 </manifest>
