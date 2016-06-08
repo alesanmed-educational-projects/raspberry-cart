@@ -8,4 +8,12 @@
     <string name="bluetooth_connected">Conectado correctamente</string>
     <string name="bluetooth_cant_connect">Imposible conectar</string>
     <string name="bluetooth_menu_refresh">Buscar</string>
+    <string name="login_title">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_submit">Guardar en carrito</string>
+    <string name="login_cancel">Cancelar</string>
+    <string name="error_bad_params">Error: Formulario incorrecto.</string>
+    <string name="error_authentication">Error: Autenticación exitosa.</string>
+    <string name="error_server">Error: Error interno del sistema.</string>
 </resources>

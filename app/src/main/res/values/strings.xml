@@ -7,4 +7,12 @@
     <string name="bluetooth_connected">Connection made successfully</string>
     <string name="bluetooth_cant_connect">Impossible to connect</string>
     <string name="bluetooth_menu_refresh">Search</string>
+    <string name="login_title">Login</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_submit">Save to cart</string>
+    <string name="login_cancel">Cancel</string>
+    <string name="error_bad_params">Error: Bad params.</string>
+    <string name="error_authentication">Error: Authentication unsuccessful.</string>
+    <string name="error_server">Error: Internal Server Error.</string>
 </resources>
