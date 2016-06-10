@@ -1,8 +1,5 @@
 package com.acmezon.acmezon_dash;
 
-import android.content.Intent;
-import android.util.Log;
-
 import com.acmezon.acmezon_dash.bluetooth.ConnectThread;
 
 /**
