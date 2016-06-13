@@ -24,7 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.acmezon.acmezon_dash.bluetooth.ConnectDialog;
-import com.acmezon.acmezon_dash.bluetooth.ConnectThread;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
 import com.acmezon.acmezon_dash.bluetooth.DeviceItem;
 import com.acmezon.acmezon_dash.bluetooth.DeviceItemListAdapter;
 import com.google.android.gms.appindexing.Action;

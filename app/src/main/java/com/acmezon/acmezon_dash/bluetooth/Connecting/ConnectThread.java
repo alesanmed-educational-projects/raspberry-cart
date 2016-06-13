@@ -8,31 +8,49 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * Created by Matt on 6/3/2015.
+ * Created by User on 6/3/2015.
  */
 public class ConnectThread extends Thread {
 
-    private BluetoothSocket bTSocket;
+    private final BluetoothDevice bTDevice;
+    private final BluetoothSocket bTSocket;
 
-    public boolean connect(BluetoothDevice bTDevice, UUID mUUID) {
-        BluetoothSocket temp = null;
+    public ConnectThread(BluetoothDevice bTDevice, UUID UUID) {
+        BluetoothSocket tmp = null;
+        this.bTDevice = bTDevice;
+
         try {
-            temp = bTDevice.createRfcommSocketToServiceRecord(mUUID);
-        } catch (IOException e) {
-            Log.d("CONNECTTHREAD","Could not create RFCOMM socket:" + e.toString());
-            return false;
+            tmp = this.bTDevice.createInsecureRfcommSocketToServiceRecord(UUID);
         }
+        catch (IOException e) {
+            Log.d("CONNECTTHREAD", "Could not start listening for RFCOMM");
+        }
+        bTSocket = tmp;
+    }
+
+    public BluetoothDevice getbTDevice() {
+        return bTDevice;
+    }
+
+    public BluetoothSocket getbTSocket() {
+        return bTSocket;
+    }
+
+    public boolean connect() {
+
         try {
             bTSocket.connect();
         } catch(IOException e) {
             Log.d("CONNECTTHREAD","Could not connect: " + e.toString());
             try {
                 bTSocket.close();
+                return false;
             } catch(IOException close) {
                 Log.d("CONNECTTHREAD", "Could not close connection:" + e.toString());
                 return false;
             }
         }
+
         return true;
     }
 
@@ -40,7 +58,6 @@ public class ConnectThread extends Thread {
         try {
             bTSocket.close();
         } catch(IOException e) {
-            Log.d("CONNECTTHREAD","Could not close connection:" + e.toString());
             return false;
         }
         return true;

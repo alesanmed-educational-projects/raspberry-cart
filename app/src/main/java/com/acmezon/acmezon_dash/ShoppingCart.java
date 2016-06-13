@@ -2,12 +2,23 @@ package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
 import com.acmezon.acmezon_dash.image_url.LazyImageLoadAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 public class ShoppingCart extends Activity {
     private BufferedReader bluetoothReader;
@@ -46,16 +57,16 @@ public class ShoppingCart extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
 
-        list=(ListView)findViewById(R.id.listView);
-        adapter=new LazyImageLoadAdapter(this, names, image_urls, this);
-        list.setAdapter(adapter);
+        //list=(ListView)findViewById(R.id.listView);
+        //adapter=new LazyImageLoadAdapter(this, names, image_urls, this);
+        //list.setAdapter(adapter);
 
-        //ConnectThread connection = ((Application) getApplication()).getConnection();
+        ConnectThread connection = ((Application) getApplication()).getConnection();
 
-        //Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
+        Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
 
-        //bluetoothListen(connection);
-        //bluetoothWrite(connection);
+        bluetoothListen(connection);
+        bluetoothWrite(connection);
     }
 
     @Override
@@ -65,14 +76,14 @@ public class ShoppingCart extends Activity {
         super.onDestroy();
     }
 
-    /*private void bluetoothWrite(ConnectThread connection) {
+    private void bluetoothWrite(ConnectThread connection) {
         try {
             bluetoothWriter = connection.getbTSocket().getOutputStream();
 
             Thread writeThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String text = "test\n";
+                    String text = "test";
                     try {
                         while (true) {
                             bluetoothWriter.write(text.getBytes());
@@ -91,9 +102,9 @@ public class ShoppingCart extends Activity {
             close(bluetoothWriter);
             Log.d("SHOPPINGCART", e.getMessage());
         }
-    }*/
+    }
 
-    /*private void bluetoothListen(ConnectThread connection) {
+    private void bluetoothListen(ConnectThread connection) {
         InputStream tmpStream;
         InputStreamReader tmpReader;
         try {
@@ -171,9 +182,9 @@ public class ShoppingCart extends Activity {
 
             updateThread.start();
         }
-    }*/
+    }
 
-    /*private void close(Closeable object) {
+    private void close(Closeable object) {
         if(object == null) return;
 
         try {
@@ -181,5 +192,5 @@ public class ShoppingCart extends Activity {
         } catch (IOException e) { }
 
         object = null;
-    }*/
+    }
 }

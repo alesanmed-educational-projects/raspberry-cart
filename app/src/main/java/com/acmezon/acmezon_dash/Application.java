@@ -1,6 +1,6 @@
 package com.acmezon.acmezon_dash;
 
-import com.acmezon.acmezon_dash.bluetooth.ConnectThread;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
 
 /**
  * Created by donzok on 8/06/16.

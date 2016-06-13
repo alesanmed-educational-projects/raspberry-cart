@@ -15,8 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".BluetoothScreen"></activity>
-        <activity android:name=".ShoppingCart">
+        <activity android:name=".ShoppingCart"></activity>
+        <activity android:name=".BluetoothScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
