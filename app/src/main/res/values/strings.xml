@@ -15,4 +15,9 @@
     <string name="error_bad_params">Error: Bad params.</string>
     <string name="error_authentication">Error: Authentication unsuccessful.</string>
     <string name="error_server">Error: Internal Server Error.</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="delete_title">Delete</string>
+    <string name="delete_subtitle">Are you sure you want to delete</string>
+    <string name="cart">Shopping cart</string>
 </resources>

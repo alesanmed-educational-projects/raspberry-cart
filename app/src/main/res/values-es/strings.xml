@@ -16,4 +16,9 @@
     <string name="error_bad_params">Error: Formulario incorrecto.</string>
     <string name="error_authentication">Error: Autenticación exitosa.</string>
     <string name="error_server">Error: Error interno del sistema.</string>
+    <string name="yes">SI</string>
+    <string name="no">NO</string>
+    <string name="delete_title">Eliminar</string>
+    <string name="delete_subtitle">¿Estás seguro de que desea eliminar</string>
+    <string name="cart">Carrito de la compra</string>
 </resources>

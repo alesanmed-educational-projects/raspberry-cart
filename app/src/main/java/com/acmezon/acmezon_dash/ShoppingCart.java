@@ -1,13 +1,31 @@
 package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
+import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.acmezon.acmezon_dash.image_url.LazyImageLoadAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class ShoppingCart extends Activity {
     private BufferedReader bluetoothReader;
@@ -16,39 +34,83 @@ public class ShoppingCart extends Activity {
     ListView list;
     LazyImageLoadAdapter adapter;
 
-    private String[] names = {
-            "Producto 1",
-            "Producto 2",
-            "Producto 3",
-            "Producto 4",
-            "Producto 5",
-            "Producto 6",
-            "Producto 7",
-            "Producto 8",
-            "Producto 9",
-            "Producto 10"
-    };
-    private String[] image_urls = {
-            "http://cdn.akamai.steamstatic.com/steam/apps/446050/header.jpg?t=1465548552",
-            "http://cdn.akamai.steamstatic.com/steam/apps/268500/header.jpg?t=1463073148",
-            "http://cdn.akamai.steamstatic.com/steam/apps/7760/header.jpg?t=1447351440",
-            "http://cdn.akamai.steamstatic.com/steam/apps/370020/header.jpg?t=1463877514",
-            "http://cdn.akamai.steamstatic.com/steam/apps/276810/header.jpg?t=1461256421",
-            "http://cdn.akamai.steamstatic.com/steam/apps/341150/header.jpg?t=1455819921",
-            "http://cdn.akamai.steamstatic.com/steam/apps/243470/header.jpg?t=1452887685",
-            "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195",
-            "http://cdn.akamai.steamstatic.com/steam/apps/447040/header.jpg?t=1465546434",
-            "http://cdn.akamai.steamstatic.com/steam/apps/271590/header.jpg?t=1465398269"
-    };
+    JSONObject[] products;
+    Button add,sub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
 
+        JSONObject p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11;
+        try {
+            p1 = new JSONObject()
+                    .put("name", "Producto 1")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p2 = new JSONObject()
+                    .put("name", "Producto 2")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p3 = new JSONObject()
+                    .put("name", "Producto 3")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p4 = new JSONObject()
+                    .put("name", "Producto 4")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p5 = new JSONObject()
+                    .put("name", "Producto 5")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p6 = new JSONObject()
+                    .put("name", "Producto 6")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p7 = new JSONObject()
+                    .put("name", "Producto 7")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p8 = new JSONObject()
+                    .put("name", "Producto 8")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p9 = new JSONObject()
+                    .put("name", "Producto 9")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p10 = new JSONObject()
+                    .put("name", "Producto 10")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+            p11 = new JSONObject()
+                    .put("name", "Producto 11")
+                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
+                    .put("quantity", 1);
+        } catch (JSONException e) {
+            p1 = p2 = p3 = p4 = p5 = p6 = p7 = p8 = p9 = p10 = p11 = new JSONObject();
+        }
+
+        products = new JSONObject[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11};
+
         list=(ListView)findViewById(R.id.listView);
-        adapter=new LazyImageLoadAdapter(this, names, image_urls, this);
+        adapter=new LazyImageLoadAdapter(this, products, this);
+        list.setItemsCanFocus(false);
+        list.setLongClickable(true);
         list.setAdapter(adapter);
+
+        Button btn_pay = (Button)findViewById(R.id.btn_pay);
+        btn_pay.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO: Redirigir
+                Toast.makeText(getApplicationContext(),
+                        "TODO: Redirección",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         //ConnectThread connection = ((Application) getApplication()).getConnection();
 
@@ -63,6 +125,96 @@ public class ShoppingCart extends Activity {
     {
         list.setAdapter(null);
         super.onDestroy();
+    }
+
+    public JSONObject[] getProducts(JSONObject[] barcodes, JSONObject[] names) {
+        JSONObject[] res = new JSONObject[barcodes.length + names.length];
+        int i = 0;
+        for (JSONObject p : barcodes) {
+            URL url = null;
+            try {
+                url = new URL(String.format("http://DOMINIO/api/product/barcode/%s", p.getString("barcode")));
+            } catch (MalformedURLException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                // Expirar a los 10 segundos si la conexión no se establece
+                connection.setConnectTimeout(10000);
+                // Esperar solo 15 segundos para que finalice la lectura
+                connection.setReadTimeout(15000);
+                connection.connect();
+
+                int response = connection.getResponseCode();
+                BufferedReader br = null;
+                if (response >= 200 && response <=399) {
+                    br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    String inputStr;
+                    while ((inputStr = br.readLine()) != null)
+                        responseStrBuilder.append(inputStr);
+                    JSONObject obj = new JSONObject(responseStrBuilder.toString());
+                    obj.put("quantity", p.getInt("quantity"));
+                    res[i] = obj;
+                    i++;
+                } else {
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        for (JSONObject p: names) {
+            URL url = null;
+            try {
+                url = new URL(String.format("http://DOMINIO//api/product/text/search/%s", p.getString("name")));
+            } catch (MalformedURLException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                // Expirar a los 10 segundos si la conexión no se establece
+                connection.setConnectTimeout(10000);
+                // Esperar solo 15 segundos para que finalice la lectura
+                connection.setReadTimeout(15000);
+                connection.connect();
+
+                int response = connection.getResponseCode();
+                BufferedReader br = null;
+                if (response >= 200 && response <=399) {
+                    br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    String inputStr;
+                    while ((inputStr = br.readLine()) != null)
+                        responseStrBuilder.append(inputStr);
+                    JSONObject obj = new JSONObject(responseStrBuilder.toString());
+                    obj.put("quantity", p.getInt("quantity"));
+                    res[i] = obj;
+                    i++;
+                } else {
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return res;
     }
 
     /*private void bluetoothWrite(ConnectThread connection) {
