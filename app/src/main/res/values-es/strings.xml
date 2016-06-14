@@ -4,6 +4,7 @@
     <string name="bluetooth_connect">Conectar</string>
     <string name="bluetooth_title">Conectar al dispositivo</string>
     <string name="bluetooth_loading">Conectando…</string>
+    <string name="bluetooth_needed">Primero debes conectarte a la barra</string>
     <string name="cancel">Cancelar</string>
     <string name="bluetooth_connected">Conectado correctamente</string>
     <string name="bluetooth_cant_connect">Imposible conectar</string>

@@ -1,10 +1,9 @@
 package com.acmezon.acmezon_dash;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import com.goka.blurredgridmenu.GridMenu;
@@ -39,8 +38,14 @@ public class MainMenu extends AppCompatActivity {
                         startActivity(bluetoothScreen);
                         break;
                     case 1: //Shopping cart
-                        Intent shoppingCart = new Intent(MainMenu.this, ShoppingCart.class);
-                        startActivity(shoppingCart);
+                        if (((Application) getApplication()).getConnection() == null){
+                            Toast.makeText(getApplicationContext(),
+                                            getString(R.string.bluetooth_needed),
+                                            Toast.LENGTH_LONG).show();
+                        } else {
+                            Intent shoppingCart = new Intent(MainMenu.this, ShoppingCart.class);
+                            startActivity(shoppingCart);
+                        }
                         break;
                     case 2: //Settings
                         break;
@@ -55,8 +60,6 @@ public class MainMenu extends AppCompatActivity {
                     default:
                         break;
                 }
-                Toast.makeText(getApplicationContext(), "Title:" + gridMenu.getTitle() + ", Position:" + position,
-                        Toast.LENGTH_SHORT).show();
             }
         });
     }

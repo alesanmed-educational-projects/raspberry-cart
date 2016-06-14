@@ -143,8 +143,8 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                                     Toast.LENGTH_LONG).show();
 
                             ((Application) getApplication()).setConnection(connection);
-                            Intent shoppingCart = new Intent(BluetoothScreen.this, ShoppingCart.class);
-                            startActivity(shoppingCart);
+                            Intent mainMenu = new Intent(BluetoothScreen.this, MainMenu.class);
+                            startActivity(mainMenu);
                         } else {
                             Toast.makeText(getApplicationContext(),
                                     getResources().getString(R.string.bluetooth_cant_connect),

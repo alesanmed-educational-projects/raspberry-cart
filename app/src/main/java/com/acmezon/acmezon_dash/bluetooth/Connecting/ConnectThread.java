@@ -20,7 +20,7 @@ public class ConnectThread extends Thread {
         this.bTDevice = bTDevice;
 
         try {
-            tmp = this.bTDevice.createInsecureRfcommSocketToServiceRecord(UUID);
+            tmp = this.bTDevice.createRfcommSocketToServiceRecord(UUID);
         }
         catch (IOException e) {
             Log.d("CONNECTTHREAD", "Could not start listening for RFCOMM");

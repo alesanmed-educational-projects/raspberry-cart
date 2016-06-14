@@ -11,21 +11,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
 import com.acmezon.acmezon_dash.image_url.LazyImageLoadAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 
 public class ShoppingCart extends Activity {
     private BufferedReader bluetoothReader;
@@ -112,11 +117,11 @@ public class ShoppingCart extends Activity {
             }
         });
 
-        //ConnectThread connection = ((Application) getApplication()).getConnection();
+        ConnectThread connection = ((Application) getApplication()).getConnection();
 
-        //Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
+        Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
 
-        //bluetoothListen(connection);
+        bluetoothListen(connection);
         //bluetoothWrite(connection);
     }
 
@@ -161,7 +166,7 @@ public class ShoppingCart extends Activity {
                     res[i] = obj;
                     i++;
                 } else {
-
+                    //TODO: Completar o eliminar el else
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -204,7 +209,7 @@ public class ShoppingCart extends Activity {
                     res[i] = obj;
                     i++;
                 } else {
-
+                    //TODO: Completar o eliminar el else
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -217,7 +222,7 @@ public class ShoppingCart extends Activity {
         return res;
     }
 
-    /*private void bluetoothWrite(ConnectThread connection) {
+    private void bluetoothWrite(ConnectThread connection) {
         try {
             bluetoothWriter = connection.getbTSocket().getOutputStream();
 
@@ -230,9 +235,7 @@ public class ShoppingCart extends Activity {
                             bluetoothWriter.write(text.getBytes());
                             Thread.sleep(1000L, 0);
                         }
-                    } catch (IOException e) {
-                        Log.d("SHOPPINGCART", e.getMessage());
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         Log.d("SHOPPINGCART", e.getMessage());
                     }
                 }
@@ -243,9 +246,9 @@ public class ShoppingCart extends Activity {
             close(bluetoothWriter);
             Log.d("SHOPPINGCART", e.getMessage());
         }
-    }*/
+    }
 
-    /*private void bluetoothListen(ConnectThread connection) {
+    private void bluetoothListen(ConnectThread connection) {
         InputStream tmpStream;
         InputStreamReader tmpReader;
         try {
@@ -259,12 +262,9 @@ public class ShoppingCart extends Activity {
         }
 
         if(bluetoothReader != null) {
-            final TextView bluetoothText = (TextView) findViewById(R.id.bluetoothInput);
-
             Thread updateThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    assert bluetoothText != null;
                     while(true) {
                         try {
                             final String new_line = bluetoothReader.readLine();
@@ -306,12 +306,7 @@ public class ShoppingCart extends Activity {
                             }
 
                             final String new_text = text;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bluetoothText.setText(new_text);
-                                }
-                            });
+                            Log.d("SHOPPINGCART", new_text);
                         } catch (IOException e) {
                             Log.d("SHOPPINGCART", e.getMessage());
                         } catch (JSONException e) {
@@ -323,9 +318,9 @@ public class ShoppingCart extends Activity {
 
             updateThread.start();
         }
-    }*/
+    }
 
-    /*private void close(Closeable object) {
+    private void close(Closeable object) {
         if(object == null) return;
 
         try {
@@ -333,5 +328,5 @@ public class ShoppingCart extends Activity {
         } catch (IOException e) { }
 
         object = null;
-    }*/
+    }
 }
