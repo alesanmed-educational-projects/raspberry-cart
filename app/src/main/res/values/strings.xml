@@ -21,4 +21,9 @@
     <string name="help">Help</string>
     <string name="about">About us</string>
     <string name="exit">Exit</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="delete_title">Delete</string>
+    <string name="delete_subtitle">Are you sure you want to delete</string>
+    <string name="cart">Shopping cart</string>
 </resources>

@@ -22,4 +22,9 @@
     <string name="help">Ayuda</string>
     <string name="about">Sobre nosotros</string>
     <string name="exit">Salir</string>
+    <string name="yes">SI</string>
+    <string name="no">NO</string>
+    <string name="delete_title">Eliminar</string>
+    <string name="delete_subtitle">¿Estás seguro de que desea eliminar</string>
+    <string name="cart">Carrito de la compra</string>
 </resources>

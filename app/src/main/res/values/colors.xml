@@ -7,4 +7,6 @@
     <color name="loading_lime">#ABCD09</color>
     <color name="loading_blue">#0943CD</color>
     <color name="loading_purple">#CD0993</color>
+    <color name="transparent">#00000000</color>
+    <color name="gray">#999999</color>
 </resources>
