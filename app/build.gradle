@@ -10,6 +10,9 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        renderscriptTargetApi 22
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
@@ -18,11 +21,15 @@ android {
         }
     }
 }
+repositories {
+    jcenter()
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.0.2'
     compile 'com.scottyab:secure-preferences-lib:0.1.4'
+    compile 'com.github.goka.blurredgridmenu:blurredgridmenu:1.0.2'
 }

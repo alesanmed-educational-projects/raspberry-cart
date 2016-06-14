@@ -3,7 +3,7 @@
     <string name="app_name">Acmezon-Dash</string>
     <string name="bluetooth_connect">Conectar</string>
     <string name="bluetooth_title">Conectar al dispositivo</string>
-    <string name="bluetooth_loading">Conectando...</string>
+    <string name="bluetooth_loading">Conectando…</string>
     <string name="cancel">Cancelar</string>
     <string name="bluetooth_connected">Conectado correctamente</string>
     <string name="bluetooth_cant_connect">Imposible conectar</string>
@@ -16,4 +16,10 @@
     <string name="error_bad_params">Error: Formulario incorrecto.</string>
     <string name="error_authentication">Error: Autenticación exitosa.</string>
     <string name="error_server">Error: Error interno del sistema.</string>
+    <string name="connect_dash">Conectar</string>
+    <string name="get_last_cart">Carrito</string>
+    <string name="settings">Opciones</string>
+    <string name="help">Ayuda</string>
+    <string name="about">Sobre nosotros</string>
+    <string name="exit">Salir</string>
 </resources>

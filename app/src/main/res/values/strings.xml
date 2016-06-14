@@ -2,7 +2,7 @@
     <string name="app_name">Acmezon-Dash</string>
     <string name="bluetooth_title">Connect to chosen device</string>
     <string name="bluetooth_connect">Connect</string>
-    <string name="bluetooth_loading">Connecting...</string>
+    <string name="bluetooth_loading">Connecting…</string>
     <string name="cancel">Cancel</string>
     <string name="bluetooth_connected">Connection made successfully</string>
     <string name="bluetooth_cant_connect">Impossible to connect</string>
@@ -15,4 +15,10 @@
     <string name="error_bad_params">Error: Bad params.</string>
     <string name="error_authentication">Error: Authentication unsuccessful.</string>
     <string name="error_server">Error: Internal Server Error.</string>
+    <string name="connect_dash">Connect</string>
+    <string name="get_last_cart">Cart</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+    <string name="about">About us</string>
+    <string name="exit">Exit</string>
 </resources>
