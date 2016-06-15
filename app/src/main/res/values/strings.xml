@@ -27,4 +27,5 @@
     <string name="delete_title">Delete</string>
     <string name="delete_subtitle">Are you sure you want to delete</string>
     <string name="cart">Shopping cart</string>
+    <string name="shopping_cart_loading">Receiving Cart…</string>
 </resources>

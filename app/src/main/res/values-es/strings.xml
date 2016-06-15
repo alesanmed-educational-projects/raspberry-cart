@@ -28,4 +28,5 @@
     <string name="delete_title">Eliminar</string>
     <string name="delete_subtitle">¿Estás seguro de que desea eliminar</string>
     <string name="cart">Carrito de la compra</string>
+    <string name="shopping_cart_loading">Obteniendo el carrito…</string>
 </resources>

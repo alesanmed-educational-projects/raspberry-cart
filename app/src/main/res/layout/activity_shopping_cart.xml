@@ -6,6 +6,17 @@
     android:padding="24dp"
     tools:context=".ShoppingCart">
 
+    <Button
+        android:id="@+id/get_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_weight="1"
+        android:text="some txt"
+        android:textColor="@android:color/black"
+        android:textSize="20dp"
+        android:visibility="visible"/>
+
     <TextView
         android:id="@+id/shopping_cart_title"
         android:layout_width="match_parent"
@@ -17,15 +28,17 @@
         android:gravity="top|center"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:visibility="invisible"/>
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/products_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/shopping_cart_title"
         android:layout_above="@+id/btn_pay"
-        android:longClickable="true"/>
+        android:longClickable="true"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/btn_pay"
@@ -36,6 +49,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/arrow_up" />
+        android:background="@drawable/arrow_up"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
