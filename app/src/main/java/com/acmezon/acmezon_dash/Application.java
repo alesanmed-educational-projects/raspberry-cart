@@ -1,19 +1,19 @@
 package com.acmezon.acmezon_dash;
 
-import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
 
 /**
  * Created by donzok on 8/06/16.
  */
 public class Application extends android.app.Application {
-    private ConnectThread connection;
+    private DeviceConnector connection;
 
     @Override
     public void onCreate() {
         super.onCreate();
     }
 
-    public synchronized ConnectThread getConnection() {
+    public synchronized DeviceConnector getConnection() {
         if (connection == null) {
             return null;
         }
@@ -21,7 +21,7 @@ public class Application extends android.app.Application {
         return connection;
     }
 
-    public synchronized  void setConnection(ConnectThread connection) {
+    public synchronized  void setConnection(DeviceConnector connection) {
         this.connection = connection;
     }
 }

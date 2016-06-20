@@ -78,10 +78,6 @@ public class MainMenu extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (0 == getSupportFragmentManager().getBackStackEntryCount()) {
-            super.onBackPressed();
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

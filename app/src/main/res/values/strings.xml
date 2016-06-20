@@ -28,4 +28,5 @@
     <string name="delete_subtitle">Are you sure you want to delete</string>
     <string name="cart">Shopping cart</string>
     <string name="shopping_cart_loading">Receiving Cart…</string>
+    <string name="empty_device_name"><![CDATA[<New device>]]></string>
 </resources>
