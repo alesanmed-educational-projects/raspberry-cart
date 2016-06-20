@@ -93,11 +93,13 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         }
 
         final JSONObject product = getItem(pos);
+        JSONObject productObj = null;
         int quantity;
 
         try {
             quantity = product.getInt("quantity");
-            holder.name.setText(product.getString("name"));
+            productObj = new JSONObject(product.getString("product"));
+            holder.name.setText(productObj.getString("name"));
             holder.quantity.setText(String.valueOf(quantity));
             holder.add.setTag(pos);
             holder.sub.setTag(pos);
@@ -106,7 +108,11 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         }
         ImageView image = holder.image;
         try {
-            imageLoader.displayImage(product.getString("image_url"), image);
+            assert productObj != null;
+            imageLoader.displayImage(activity.getApplicationContext().getString(
+                    R.string.domain)
+                    .concat("/img/")
+                    .concat(productObj.getString("image")), image);
         } catch (JSONException e) {
             e.printStackTrace();
         }

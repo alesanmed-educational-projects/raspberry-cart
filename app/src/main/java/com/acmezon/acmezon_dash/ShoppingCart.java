@@ -28,12 +28,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ShoppingCart extends Activity {
-    private BufferedReader bluetoothReader;
-    private OutputStream bluetoothWriter;
     private Button btnGetCart;
     private DeviceConnector connection;
+    private ProgressDialog loadingDialog;
 
     ListView list;
     LazyImageLoadAdapter adapter;
@@ -67,12 +69,20 @@ public class ShoppingCart extends Activity {
 
             @Override
             public void onMessageRead(int bytes, String data) {
-                Log.d("BLUETOOTH", data);
+                data = data.trim();
+                Log.d("BLUETOOTH", data.trim());
+                switch (data){
+                    case Commands.LAST_CART_REQUESTED:
+                        getLastCart();
+                        break;
+                    default:
+                        receiveProducts(data);
+                        break;
+                }
             }
-
             @Override
             public void onMessageWritten(byte[] messageSended) {
-                //Do nothing, just connect;
+                Log.d("BLUETOOTH", "Message sended: " + new String(messageSended));
             }
 
             @Override
@@ -87,119 +97,24 @@ public class ShoppingCart extends Activity {
         };
 
         connection.setHandler(mHandler);
-
-        //bluetoothListen();
-        //bluetoothWrite(connection);
     }
 
     public void getLastCart(){
-        if (Looper.myLooper() == null) {
-            Looper.prepare();
-        }
-        final ProgressDialog loadingDialog = ProgressDialog.show(this, "",
-                getResources().getString(R.string.shopping_cart_loading), true);
-
-        loadingDialog.show();
-
-        Thread shoppingCartThread = new Thread() {
+        Thread getCart = new Thread(new Runnable() {
             @Override
             public void run() {
-                //waitForBluetoothProducts();
-                loadingDialog.dismiss();
-            }
-        };
+                if (Looper.myLooper() == null) {
+                    Looper.prepare();
+                }
+                loadingDialog = ProgressDialog.show(ShoppingCart.this, "",
+                        getResources().getString(R.string.shopping_cart_loading), true);
 
-        shoppingCartThread.start();
-        //sendCommand(Commands.GET_LAST);
-        JSONObject p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11;
-        try {
-            p1 = new JSONObject()
-                    .put("name", "Producto 1")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p2 = new JSONObject()
-                    .put("name", "Producto 2")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p3 = new JSONObject()
-                    .put("name", "Producto 3")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p4 = new JSONObject()
-                    .put("name", "Producto 4")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p5 = new JSONObject()
-                    .put("name", "Producto 5")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p6 = new JSONObject()
-                    .put("name", "Producto 6")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p7 = new JSONObject()
-                    .put("name", "Producto 7")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p8 = new JSONObject()
-                    .put("name", "Producto 8")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p9 = new JSONObject()
-                    .put("name", "Producto 9")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p10 = new JSONObject()
-                    .put("name", "Producto 10")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-            p11 = new JSONObject()
-                    .put("name", "Producto 11")
-                    .put("image_url", "http://cdn.akamai.steamstatic.com/steam/apps/377160/header.jpg?t=1458619195")
-                    .put("quantity", 1);
-        } catch (JSONException e) {
-            p1 = p2 = p3 = p4 = p5 = p6 = p7 = p8 = p9 = p10 = p11 = new JSONObject();
-        }
-
-        products = new JSONObject[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11};
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                list=(ListView)findViewById(R.id.products_list);
-                adapter=new LazyImageLoadAdapter(ShoppingCart.this, products, ShoppingCart.this);
-                list.setItemsCanFocus(false);
-                list.setLongClickable(true);
-                list.setAdapter(adapter);
-
-                Button btn_pay = (Button)findViewById(R.id.btn_pay);
-                btn_pay.setOnClickListener( new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        // TODO: Redirigir
-                        Toast.makeText(getApplicationContext(),
-                                "TODO: Redirección",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                btnGetCart.setVisibility(View.INVISIBLE);
-
-                TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
-                assert shpTitle != null;
-
-                ListView productsList = (ListView) findViewById(R.id.products_list);
-                assert productsList != null;
-
-                Button btnShpNext = (Button) findViewById(R.id.btn_pay);
-                assert btnShpNext != null;
-
-                shpTitle.setVisibility(View.VISIBLE);
-                productsList.setVisibility(View.VISIBLE);
-                btnShpNext.setVisibility(View.VISIBLE);
+                Log.d("SHOPPINGCART", "Loading dialog created");
+                loadingDialog.show();
             }
         });
+        getCart.start();
+        connection.write(Commands.GET_LAST.getBytes());
     }
 
     @Override
@@ -211,13 +126,13 @@ public class ShoppingCart extends Activity {
         super.onDestroy();
     }
 
-    public JSONObject[] getProducts(JSONObject[] barcodes, JSONObject[] names) {
-        JSONObject[] res = new JSONObject[barcodes.length + names.length];
+    public JSONObject[] getProducts(List<JSONObject> barcodes, List<JSONObject> names) {
+        JSONObject[] res = new JSONObject[barcodes.size() + names.size()];
         int i = 0;
         for (JSONObject p : barcodes) {
             URL url = null;
             try {
-                url = new URL(String.format("http://DOMINIO/api/product/barcode/%s", p.getString("barcode")));
+                url = new URL(getString(R.string.domain).concat(String.format("/api/product/barcode/%s", p.getString("barcode"))));
             } catch (MalformedURLException | JSONException e) {
                 e.printStackTrace();
             }
@@ -260,7 +175,7 @@ public class ShoppingCart extends Activity {
         for (JSONObject p: names) {
             URL url = null;
             try {
-                url = new URL(String.format("http://DOMINIO//api/product/text/search/%s", p.getString("name")));
+                url = new URL(getString(R.string.domain).concat(String.format("/api/product/text/search/%s", p.getString("name"))));
             } catch (MalformedURLException | JSONException e) {
                 e.printStackTrace();
             }
@@ -301,178 +216,93 @@ public class ShoppingCart extends Activity {
         return res;
     }
 
-    /*private void sendCommand(String command) {
+    private void receiveProducts(String stringProducts) {
+        JSONObject[] completedProducts = null;
         try {
-            bluetoothWriter = connection.getbTSocket().getOutputStream();
+            JSONObject productsJSON = new JSONObject(stringProducts);
 
+            JSONObject names = null;
             try {
-                bluetoothWriter.write(command.getBytes());
-            } catch (Exception e) {
+                names = ((JSONObject) productsJSON.get("products"));
+            } catch (JSONException e) {
                 Log.d("SHOPPINGCART", e.getMessage());
             }
-        } catch (IOException e) {
-            close(bluetoothWriter);
+
+            JSONObject barcodes = null;
+            try {
+                barcodes = ((JSONObject) productsJSON.get("barcodes"));
+            } catch (JSONException e) {
+                Log.d("SHOPPINGCART", e.getMessage());
+            }
+
+            List<JSONObject> namesArray = new ArrayList<>();
+            if (names != null) {
+                Iterator<String> namesKeys = names.keys();
+                while (namesKeys.hasNext()) {
+                    String key = namesKeys.next();
+                    JSONObject tmp = new JSONObject();
+                    tmp.put("name", key);
+                    tmp.put("quantity", names.get(key));
+                    namesArray.add(tmp);
+                }
+            }
+
+            List<JSONObject> barcodesArray = new ArrayList<>();
+            if (barcodes != null) {
+                Iterator<String> barcodesKeys = barcodes.keys();
+                while (barcodesKeys.hasNext()) {
+                    String key = barcodesKeys.next();
+                    JSONObject tmp = new JSONObject();
+                    tmp.put("barcode", key);
+                    tmp.put("quantity", barcodes.get(key));
+                    barcodesArray.add(tmp);
+                }
+            }
+
+            completedProducts = getProducts(barcodesArray, namesArray);
+        }catch (JSONException e) {
             Log.d("SHOPPINGCART", e.getMessage());
         }
+
+        final JSONObject[] finalProducts = completedProducts;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                assert finalProducts != null;
+
+                list=(ListView)findViewById(R.id.products_list);
+                assert list != null;
+                adapter=new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);
+                list.setItemsCanFocus(false);
+                list.setLongClickable(true);
+                list.setAdapter(adapter);
+
+                Button btn_pay = (Button)findViewById(R.id.btn_pay);
+                assert btn_pay != null;
+                btn_pay.setOnClickListener( new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO: Redirigir
+                        Toast.makeText(getApplicationContext(),
+                                "TODO: Redirección",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                btnGetCart.setVisibility(View.INVISIBLE);
+
+                loadingDialog.dismiss();
+
+                TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
+                assert shpTitle != null;
+
+                shpTitle.setVisibility(View.VISIBLE);
+                list.setVisibility(View.VISIBLE);
+                btn_pay.setVisibility(View.VISIBLE);
+            }
+        });
     }
-
-    private void waitForBluetoothProducts() {
-        Log.d("SHOPPINGCART", "ENTRA!!!!");
-        final byte delimiter = 10; //This is the ASCII code for a newline character
-
-        boolean stopWorker = false;
-        int readBufferPosition = 0;
-        byte[] readBuffer = new byte[1024];
-        InputStream tmpStream = null;
-        InputStreamReader tmpReader;
-        try {
-            tmpStream = connection.getbTSocket().getInputStream();
-            tmpReader = new InputStreamReader(tmpStream);
-            bluetoothReader = new BufferedReader(tmpReader);
-
-            bluetoothWriter = connection.getbTSocket().getOutputStream();
-        } catch (IOException e) {
-            Log.d("SHOPPINGCART", e.getMessage());
-            close(bluetoothReader);
-        }
-
-
-        Log.d("SHOPPINGCART", "IF!!!!");
-        if(tmpStream != null) {
-            try {
-                bluetoothWriter.write(Commands.GET_LAST.getBytes());
-            } catch (IOException e) {
-                Log.d("SHOPPINGCART", e.getMessage());
-            }
-            while(!Thread.currentThread().isInterrupted() && !stopWorker)
-            {
-                try
-                {
-                    int bytesAvailable = tmpStream.available();
-                    if(bytesAvailable > 0)
-                    {
-                        byte[] packetBytes = new byte[bytesAvailable];
-                        tmpStream.read(packetBytes);
-                        for(int i=0;i<bytesAvailable;i++)
-                        {
-                            byte b = packetBytes[i];
-                            if(b == delimiter)
-                            {
-                                byte[] encodedBytes = new byte[readBufferPosition];
-                                System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
-                                final String data = new String(encodedBytes, "US-ASCII");
-                                readBufferPosition = 0;
-
-                                Log.d("SHOPPINGCART", data);
-                            }
-                            else
-                            {
-                                readBuffer[readBufferPosition++] = b;
-                            }
-                        }
-                    }
-                }
-                catch (IOException ex)
-                {
-                    stopWorker = true;
-                }
-            }
-            /*
-            while (!Thread.currentThread().isInterrupted()) {
-                Log.d("SHOPPINGCART", "WHILE!!!!");
-                try {
-                    Log.d("SHOPPINGCART", "Char: " + (char) bluetoothReader.read());
-                    /*final String new_line = bluetoothReader.readLine();
-                    Log.d("SHOPPINGCART", new_line);
-                    if (new_line.isEmpty()) {
-                        continue;
-                    }
-
-
-                    Log.d("SHOPPINGCART", new_line);
-                    JSONObject productsJSON = new JSONObject(new_line);
-                    String text = "";
-
-                    JSONObject products = null;
-                    try{
-                        products = ((JSONObject) productsJSON.get("products"));
-                    } catch (JSONException e) {
-                        Log.d("SHOPPINGCART", e.getMessage());
-                    }
-
-                    JSONObject barcodes = null;
-                    try{
-                        barcodes = ((JSONObject) productsJSON.get("barcodes"));
-                    }catch (JSONException e){
-                        Log.d("SHOPPINGCART", e.getMessage());
-                    }
-
-                    if(products != null) {
-                        Iterator<String> productKeys = products.keys();
-                        while (productKeys.hasNext()) {
-                            String key = productKeys.next();
-                            text += key + " - " + products.get(key) + "\n";
-                        }
-                    }
-
-                    if(barcodes != null) {
-                        Iterator<String> barcodesKeys = barcodes.keys();
-                        while (barcodesKeys.hasNext()) {
-                            String key = barcodesKeys.next();
-                            text += key + " - " + barcodes.get(key) + "\n";
-                        }
-                    }
-
-                    final String new_text = text;
-                    Log.d("SHOPPINGCART", new_text);
-                    break;
-                } catch (IOException e) {
-                    Log.d("SHOPPINGCART", e.getMessage());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }*//*
-        } else {
-            Log.d("SHOPPINGCART", "ELSE!!!!");
-        }
-    }*/
-
-    /*
-    private void bluetoothListen() {
-        InputStream tmpStream;
-        InputStreamReader tmpReader;
-        try {
-            tmpStream = connection.getbTSocket().getInputStream();
-            tmpReader = new InputStreamReader(tmpStream);
-            bluetoothReader = new BufferedReader(tmpReader);
-
-            bluetoothWriter = connection.getbTSocket().getOutputStream();
-        } catch (IOException e) {
-            close(bluetoothReader);
-        }
-
-        if(bluetoothReader != null) {
-            Thread updateThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while(true) {
-                        try {
-                            final String new_line = bluetoothReader.readLine();
-                            if (new_line.isEmpty() || !new_line.equals("get_last_cart")) {
-                                continue;
-                            }
-
-                            getLastCart();
-                        } catch (IOException e) {
-                            Log.d("SHOPPINGCART", e.getMessage());
-                        }
-                    }
-                }
-            });
-
-            updateThread.start();
-        }
-    }*/
 
     private void close(Closeable object) {
         if(object == null) return;

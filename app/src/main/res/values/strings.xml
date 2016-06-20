@@ -29,4 +29,6 @@
     <string name="cart">Shopping cart</string>
     <string name="shopping_cart_loading">Receiving Cart…</string>
     <string name="empty_device_name"><![CDATA[<New device>]]></string>
+    <string name="domain">http://acmezon.ddns.net:8080</string>
+    <string name="get_cart">Get last cart</string>
 </resources>

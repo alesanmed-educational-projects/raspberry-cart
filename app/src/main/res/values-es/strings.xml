@@ -30,4 +30,6 @@
     <string name="cart">Carrito de la compra</string>
     <string name="shopping_cart_loading">Obteniendo el carrito…</string>
     <string name="empty_device_name"><![CDATA[<Nuevo dispositivo>]]></string>
+    <string name="domain">http://acmezon.ddns.net:8080</string>
+    <string name="get_cart">Obtener carrito</string>
 </resources>

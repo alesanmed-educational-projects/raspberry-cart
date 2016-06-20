@@ -285,7 +285,8 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     protected void onDestroy() {
         super.onDestroy();
         BTAdapter.cancelDiscovery();
-        connector.stop();
+        if(connector != null)
+            connector.stop();
     }
 
     @Override

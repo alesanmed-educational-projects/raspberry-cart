@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:layout_weight="1"
-        android:text="some txt"
+        android:text="@string/get_cart"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         android:visibility="visible"/>
