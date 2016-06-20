@@ -55,7 +55,7 @@ public class MainMenu extends AppCompatActivity {
                         break;
                     case 5: //Exit
                         android.os.Process.killProcess(android.os.Process.myPid());
-                        System.exit(1);
+                        finish();
                         break;
                     default:
                         break;

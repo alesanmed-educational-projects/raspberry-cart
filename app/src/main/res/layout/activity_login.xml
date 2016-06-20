@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/login_title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -27,7 +27,8 @@
         android:layout_marginTop="65dp"
         android:layout_below="@+id/login_title"
         android:layout_alignLeft="@+id/input_password"
-        android:layout_alignStart="@+id/input_password" />
+        android:layout_alignStart="@+id/input_password"
+        android:textSize="@dimen/abc_text_size_large_material" />
 
     <EditText
         android:id="@+id/input_password"
@@ -37,13 +38,14 @@
         android:hint="@string/login_password"
         android:inputType="textPassword"
         android:layout_below="@+id/input_email"
-        android:layout_marginTop="63dp" />
+        android:layout_marginTop="63dp"
+        android:textSize="@dimen/abc_text_size_large_material" />
 
     <Button
         android:id="@+id/submit_btn"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/notification_large_icon_height"
         android:layout_gravity="center_horizontal"
         android:text="@string/login_submit"
         android:layout_alignParentBottom="true"
@@ -55,7 +57,7 @@
         android:id="@+id/cancel_btn"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/notification_large_icon_height"
         android:layout_gravity="center_horizontal"
         android:text="@string/login_cancel"
         android:layout_alignParentBottom="true"

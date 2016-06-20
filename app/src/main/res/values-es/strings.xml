@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Acmezon-Dash</string>
+    <string name="connection">Conexión</string>
     <string name="bluetooth_connect">Conectar</string>
     <string name="bluetooth_title">Conectar al dispositivo</string>
     <string name="bluetooth_loading">Conectando…</string>
@@ -30,4 +31,5 @@
     <string name="cart">Carrito de la compra</string>
     <string name="shopping_cart_loading">Obteniendo el carrito…</string>
     <string name="empty_device_name"><![CDATA[<Nuevo dispositivo>]]></string>
+    <string name="swipe_please">Lista de dispositivos no actualizados.\nPor favor arrastra hacia abajo para escanear nuevos dispositivos a su alrededor.</string>
 </resources>

@@ -6,9 +6,9 @@
 
     <Button
         android:id="@+id/btn_substract"
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.1"
+        android:layout_weight="0.2"
         android:text="-"
         android:layout_gravity="left|center_vertical"
         />
@@ -24,7 +24,7 @@
     <TextView
         android:id="@+id/product_quantity"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="0.05"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_gravity="center"
@@ -32,7 +32,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="0.01"
         android:text="x"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -43,16 +43,16 @@
         android:id="@+id/product_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
+        android:layout_weight="0.3"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center_horizontal|center_vertical"
          />
 
     <Button
         android:id="@+id/btn_add"
-        android:layout_width="0dp"
+        android:layout_width="1dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.1"
+        android:layout_weight="0.2"
         android:text="+"
         android:layout_gravity="center_vertical|right"
          />
