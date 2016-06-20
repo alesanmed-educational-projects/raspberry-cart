@@ -23,8 +23,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.acmezon.acmezon_dash.bluetooth.BluetoothResponseHandler;
 import com.acmezon.acmezon_dash.bluetooth.ConnectDialog;
-import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceData;
 import com.acmezon.acmezon_dash.bluetooth.DeviceItem;
 import com.acmezon.acmezon_dash.bluetooth.DeviceItemListAdapter;
 import com.google.android.gms.appindexing.Action;
@@ -33,14 +35,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.UUID;
 
 public class BluetoothScreen extends ListActivity implements ConnectDialog.ConnectDialogListener{
     private BluetoothAdapter BTAdapter;
     private DeviceItemListAdapter mAdapter;
     private ArrayList<DeviceItem> deviceItemList;
-    private ConnectThread connection;
+    private DeviceConnector connector;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private static BluetoothResponseHandler mHandler;
+    private ProgressDialog loadingDialog;
+    static BluetoothScreen instance;
 
     public static int REQUEST_BLUETOOTH = 1;
     private final BroadcastReceiver bReciever = new BroadcastReceiver() {
@@ -67,6 +71,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.activity_home_screen);
 
         deviceItemList = new ArrayList<>();
@@ -95,6 +100,82 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                 startActivityForResult(enableBT, REQUEST_BLUETOOTH);
             }
 
+            if (mHandler == null){
+                mHandler = new BluetoothResponseHandler(){
+                    @Override
+                    public void onDeviceName(String deviceName) {
+                        super.onDeviceName(deviceName);
+                    }
+
+                    @Override
+                    public void onMessageRead(int bytes, String data) {
+                        //Do nothing, just connect;
+                    }
+
+                    @Override
+                    public void onMessageWritten(byte[] messageSended) {
+                        //Do nothing, just connect;
+                    }
+
+                    @Override
+                    public void onStateChange(int state) {
+                        super.onStateChange(state);
+                        Log.d("BLUETOOTH", "MESSAGE_STATE_CHANGE: " + state);
+                        switch (state) {
+                            case DeviceConnector.STATE_CONNECTED:
+                                Log.d("BLUETOOTH", "Connected");
+                                Thread connectedThread = new Thread(){
+                                    @Override
+                                    public void run() {
+                                        loadingDialog.dismiss();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getApplicationContext(),
+                                                        getResources().getString(R.string.bluetooth_connected),
+                                                        Toast.LENGTH_LONG).show();
+                                                Intent mainMenu = new Intent(BluetoothScreen.this, MainMenu.class);
+                                                startActivity(mainMenu);
+                                                BluetoothScreen.this.unregisterReceiver(bReciever);
+                                                //finish();
+                                            }
+                                        });
+                                    }
+                                };
+
+                                connectedThread.start();
+                                break;
+                            case DeviceConnector.STATE_CONNECTING:
+                                Log.d("BLUETOOTH", "Connecting");
+                                break;
+                            case DeviceConnector.STATE_NONE:
+                                Log.d("BLUETOOTH", "Not Connected");
+                                Thread notConnectedThread = new Thread(){
+                                    @Override
+                                    public void run() {
+                                        loadingDialog.dismiss();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getApplicationContext(),
+                                                        getResources().getString(R.string.bluetooth_cant_connect),
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                };
+                                notConnectedThread.start();
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void onToast(Bundle data) {
+                        super.onToast(data);
+                    }
+                };
+            }
+
             setListAdapter(mAdapter);
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -114,48 +195,19 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     @Override
     public void onDialogPositiveClick(final DialogFragment dialog) {
         Log.d("DEVICECONNECTION", "Connecting to device: " + ((ConnectDialog) dialog).getdName());
-        final ProgressDialog loadingDialog = ProgressDialog.show(this, "",
+
+        loadingDialog = ProgressDialog.show(this, "",
                 getResources().getString(R.string.bluetooth_loading), true);
 
         loadingDialog.show();
+        BluetoothDevice device = BTAdapter.getRemoteDevice(((ConnectDialog) dialog).getdMac());
 
-        Thread bluetoothThread = new Thread() {
-            @Override
-            public void run() {
-                BluetoothDevice device = BTAdapter.getRemoteDevice(((ConnectDialog) dialog).getdMac());
-
-                Log.d("DEVICECONNECTION", "Device to connect: " + device.getName() + " - " + device.getAddress());
-                connection = new ConnectThread(device,
-                        UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
-
-                BTAdapter.cancelDiscovery();
-                final Boolean res = connection.connect();
-
-                Log.d("DEVICECONNETION", "Connected to device " + ((ConnectDialog) dialog).getdName() + ": " + res);
-                loadingDialog.dismiss();
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (res) {
-                            Toast.makeText(getApplicationContext(),
-                                    getResources().getString(R.string.bluetooth_connected),
-                                    Toast.LENGTH_LONG).show();
-
-                            ((Application) getApplication()).setConnection(connection);
-                            Intent mainMenu = new Intent(BluetoothScreen.this, MainMenu.class);
-                            startActivity(mainMenu);
-                        } else {
-                            Toast.makeText(getApplicationContext(),
-                                    getResources().getString(R.string.bluetooth_cant_connect),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-        };
-
-        bluetoothThread.start();
+        String emptyName = getString(R.string.empty_device_name);
+        DeviceData data = new DeviceData(device, emptyName);
+        connector = new DeviceConnector(data);
+        connector.setHandler(mHandler);
+        ((Application) getApplication()).setConnection(connector);
+        ((Application) getApplication()).getConnection().connect();
     }
 
     @Override
@@ -215,6 +267,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
         this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BTAdapter.cancelDiscovery();
                 DeviceItem device = (DeviceItem) parent.getItemAtPosition(position);
                 Log.d("DEVICELIST", "DEVICE ITEM CLICKED: " + device.getDeviceName());
 
@@ -232,9 +285,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     protected void onDestroy() {
         super.onDestroy();
         BTAdapter.cancelDiscovery();
-        if (connection != null) {
-            connection.cancel();
-        }
+        connector.stop();
     }
 
     @Override
@@ -275,5 +326,9 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    public static BluetoothScreen getInstance(){
+        return instance;
     }
 }

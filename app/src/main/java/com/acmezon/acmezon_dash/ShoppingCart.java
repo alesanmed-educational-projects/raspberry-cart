@@ -1,24 +1,19 @@
 package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acmezon.acmezon_dash.bluetooth.BluetoothResponseHandler;
 import com.acmezon.acmezon_dash.bluetooth.Commands;
-import com.acmezon.acmezon_dash.bluetooth.Connecting.ConnectThread;
+import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
 import com.acmezon.acmezon_dash.image_url.LazyImageLoadAdapter;
 
 import org.json.JSONException;
@@ -26,7 +21,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,13 +28,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 
 public class ShoppingCart extends Activity {
     private BufferedReader bluetoothReader;
     private OutputStream bluetoothWriter;
     private Button btnGetCart;
-    private ConnectThread connection;
+    private DeviceConnector connection;
 
     ListView list;
     LazyImageLoadAdapter adapter;
@@ -66,9 +59,36 @@ public class ShoppingCart extends Activity {
 
         connection = ((Application) getApplication()).getConnection();
 
-        Log.d("SHOPPINGCART", connection.getbTDevice().getAddress());
+        BluetoothResponseHandler mHandler = new BluetoothResponseHandler(){
+            @Override
+            public void onDeviceName(String deviceName) {
+                super.onDeviceName(deviceName);
+            }
 
-        bluetoothListen();
+            @Override
+            public void onMessageRead(int bytes, String data) {
+                Log.d("BLUETOOTH", data);
+            }
+
+            @Override
+            public void onMessageWritten(byte[] messageSended) {
+                //Do nothing, just connect;
+            }
+
+            @Override
+            public void onStateChange(int state) {
+                //Do Nothing, just read/write
+            }
+
+            @Override
+            public void onToast(Bundle data) {
+                super.onToast(data);
+            }
+        };
+
+        connection.setHandler(mHandler);
+
+        //bluetoothListen();
         //bluetoothWrite(connection);
     }
 
@@ -84,7 +104,7 @@ public class ShoppingCart extends Activity {
         Thread shoppingCartThread = new Thread() {
             @Override
             public void run() {
-                waitForBluetoothProducts();
+                //waitForBluetoothProducts();
                 loadingDialog.dismiss();
             }
         };
@@ -185,7 +205,9 @@ public class ShoppingCart extends Activity {
     @Override
     public void onDestroy()
     {
-        list.setAdapter(null);
+        if(list != null)
+            list.setAdapter(null);
+
         super.onDestroy();
     }
 
@@ -279,7 +301,7 @@ public class ShoppingCart extends Activity {
         return res;
     }
 
-    private void sendCommand(String command) {
+    /*private void sendCommand(String command) {
         try {
             bluetoothWriter = connection.getbTSocket().getOutputStream();
 
@@ -409,12 +431,13 @@ public class ShoppingCart extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }*/
+            }*//*
         } else {
             Log.d("SHOPPINGCART", "ELSE!!!!");
         }
-    }
+    }*/
 
+    /*
     private void bluetoothListen() {
         InputStream tmpStream;
         InputStreamReader tmpReader;
@@ -449,7 +472,7 @@ public class ShoppingCart extends Activity {
 
             updateThread.start();
         }
-    }
+    }*/
 
     private void close(Closeable object) {
         if(object == null) return;
