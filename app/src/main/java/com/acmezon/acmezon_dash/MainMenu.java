@@ -11,6 +11,7 @@ import com.goka.blurredgridmenu.GridMenuFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
 
 public class MainMenu extends AppCompatActivity {
     private GridMenuFragment mGridMenuFragment;
@@ -50,6 +51,8 @@ public class MainMenu extends AppCompatActivity {
                     case 2: //Settings
                         break;
                     case 3: //About us
+                        Intent activityAboutUs = new Intent(MainMenu.this, AboutUs.class);
+                        startActivity(activityAboutUs);
                         break;
                     case 4: //Help
                         break;
