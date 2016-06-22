@@ -2,9 +2,9 @@ package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +22,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +39,7 @@ public class ShoppingCart extends Activity {
     private DeviceConnector connection;
     private ProgressDialog loadingDialog;
     private boolean cartReceived = false;
+    private final String FILENAME = "shopping_cart";
 
     ListView list;
     LazyImageLoadAdapter adapter;
@@ -47,7 +49,9 @@ public class ShoppingCart extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
 
-        if (!cartReceived) {
+        File shoppingCart = getBaseContext().getFileStreamPath(FILENAME);
+        Log.d("SHOPPINGCART", "Exists: " + shoppingCart.exists());
+        if (!cartReceived && !shoppingCart.exists()) {
             btnGetCart = (Button) findViewById(R.id.get_cart);
 
             assert btnGetCart != null;
@@ -101,19 +105,45 @@ public class ShoppingCart extends Activity {
         } else {
             list = (ListView) findViewById(R.id.products_list);
             assert list != null;
-            list.setVisibility(View.VISIBLE);
-
-            Button btn_pay = (Button) findViewById(R.id.btn_pay);
-            assert btn_pay != null;
-            btn_pay.setVisibility(View.VISIBLE);
 
             btnGetCart = (Button) findViewById(R.id.get_cart);
             assert btnGetCart != null;
-            btnGetCart.setVisibility(View.INVISIBLE);
 
-            TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
-            assert shpTitle != null;
-            shpTitle.setVisibility(View.VISIBLE);
+            if (!cartReceived) {
+                FileInputStream shoppingCartFile;
+                try {
+                    shoppingCartFile = this.getApplicationContext().openFileInput(FILENAME);
+                    InputStreamReader isr = new InputStreamReader(shoppingCartFile);
+                    BufferedReader bufferedReader = new BufferedReader(isr);
+                    final StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    Thread receiveProducts = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            receiveProducts(sb.toString());
+                        }
+                    });
+
+                    receiveProducts.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                list.setVisibility(View.VISIBLE);
+
+                Button btn_pay = (Button) findViewById(R.id.btn_pay);
+                assert btn_pay != null;
+                btn_pay.setVisibility(View.VISIBLE);
+
+                btnGetCart.setVisibility(View.INVISIBLE);
+
+                TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
+                assert shpTitle != null;
+                shpTitle.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -243,7 +273,7 @@ public class ShoppingCart extends Activity {
         return res.toArray(new JSONObject[res.size()]);
     }
 
-    private void receiveProducts(String stringProducts) {
+    private void receiveProducts(final String stringProducts) {
         JSONObject[] completedProducts = null;
         try {
             JSONObject productsJSON = new JSONObject(stringProducts);
@@ -319,7 +349,18 @@ public class ShoppingCart extends Activity {
 
                     btnGetCart.setVisibility(View.INVISIBLE);
 
-                    loadingDialog.dismiss();
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
+
+                    FileOutputStream outputStream;
+
+                    try {
+                        outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                        outputStream.write(stringProducts.getBytes());
+                        outputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
                     assert shpTitle != null;
