@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acmezon.acmezon_dash.bluetooth.BluetoothResponseHandler;
@@ -243,6 +244,8 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     }
 
     private void updateFromSwipe() {
+        TextView swipe_indicator = (TextView) this.findViewById(R.id.swipe_please);
+        swipe_indicator.setVisibility(View.INVISIBLE);
         Set<BluetoothDevice> pairedDevices = BTAdapter.getBondedDevices();
         mAdapter.clear();
         if (pairedDevices.size() > 0) {

@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
+
     <TableRow android:layout_width="fill_parent"
         android:id="@+id/device"
         android:layout_height="wrap_content">
 
-        <TextView android:textColor="#000000"
+        <TextView
+            android:textColor="#000000"
             android:id="@+id/name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="name"
-            android:gravity="left"
             android:layout_weight="1"
-            android:typeface="monospace"
-            android:height="40sp" />
+            android:height="60sp" />
 
-        <TextView android:textColor="#000000"
+        <TextView
+            android:textColor="#000000"
             android:id="@+id/mac"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="mac"
-            android:gravity="left"
             android:layout_weight="1"
             android:typeface="monospace"
-            android:height="40sp" />
+            android:height="60sp" />
     </TableRow>
 </TableLayout>
