@@ -2,6 +2,7 @@ package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -36,71 +37,88 @@ public class ShoppingCart extends Activity {
     private Button btnGetCart;
     private DeviceConnector connection;
     private ProgressDialog loadingDialog;
+    private boolean cartReceived = false;
 
     ListView list;
     LazyImageLoadAdapter adapter;
-
-    JSONObject[] products;
-    Button add,sub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
 
-        btnGetCart = (Button) findViewById(R.id.get_cart);
+        if (!cartReceived) {
+            btnGetCart = (Button) findViewById(R.id.get_cart);
 
-        assert btnGetCart != null;
+            assert btnGetCart != null;
 
-        btnGetCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getLastCart();
-            }
-        });
-
-        connection = ((Application) getApplication()).getConnection();
-
-        BluetoothResponseHandler mHandler = new BluetoothResponseHandler(){
-            @Override
-            public void onDeviceName(String deviceName) {
-                super.onDeviceName(deviceName);
-            }
-
-            @Override
-            public void onMessageRead(int bytes, String data) {
-                data = data.trim();
-                Log.d("BLUETOOTH", data.trim());
-                switch (data){
-                    case Commands.LAST_CART_REQUESTED:
-                        getLastCart();
-                        break;
-                    default:
-                        receiveProducts(data);
-                        break;
+            btnGetCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getLastCart();
                 }
-            }
-            @Override
-            public void onMessageWritten(byte[] messageSended) {
-                Log.d("BLUETOOTH", "Message sended: " + new String(messageSended));
-            }
+            });
 
-            @Override
-            public void onStateChange(int state) {
-                //Do Nothing, just read/write
-            }
+            /*connection = ((Application) getApplication()).getConnection();
 
-            @Override
-            public void onToast(Bundle data) {
-                super.onToast(data);
-            }
-        };
+            BluetoothResponseHandler mHandler = new BluetoothResponseHandler() {
+                @Override
+                public void onDeviceName(String deviceName) {
+                    super.onDeviceName(deviceName);
+                }
 
-        connection.setHandler(mHandler);
+                @Override
+                public void onMessageRead(int bytes, String data) {
+                    data = data.trim();
+                    Log.d("BLUETOOTH", data.trim());
+                    switch (data) {
+                        case Commands.LAST_CART_REQUESTED:
+                            getLastCart();
+                            break;
+                        default:
+                            receiveProducts(data);
+                            break;
+                    }
+                }
+
+                @Override
+                public void onMessageWritten(byte[] messageSended) {
+                    Log.d("BLUETOOTH", "Message sended: " + new String(messageSended));
+                }
+
+                @Override
+                public void onStateChange(int state) {
+                    //Do Nothing, just read/write
+                }
+
+                @Override
+                public void onToast(Bundle data) {
+                    super.onToast(data);
+                }
+            };
+
+            connection.setHandler(mHandler);*/
+        } else {
+            list = (ListView) findViewById(R.id.products_list);
+            assert list != null;
+            list.setVisibility(View.VISIBLE);
+
+            Button btn_pay = (Button) findViewById(R.id.btn_pay);
+            assert btn_pay != null;
+            btn_pay.setVisibility(View.VISIBLE);
+
+            btnGetCart = (Button) findViewById(R.id.get_cart);
+            assert btnGetCart != null;
+            btnGetCart.setVisibility(View.INVISIBLE);
+
+            TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
+            assert shpTitle != null;
+            shpTitle.setVisibility(View.VISIBLE);
+        }
     }
 
     public void getLastCart(){
-        Thread getCart = new Thread(new Runnable() {
+        /*Thread getCart = new Thread(new Runnable() {
             @Override
             public void run() {
                 if (Looper.myLooper() == null) {
@@ -113,21 +131,33 @@ public class ShoppingCart extends Activity {
                 loadingDialog.show();
             }
         });
-        getCart.start();
-        connection.write(Commands.GET_LAST.getBytes());
+        getCart.start();*/
+        //connection.write(Commands.GET_LAST.getBytes());
+        Thread receiveThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                receiveProducts("{\"barcodes\": {\"4949394809461\": 1}}");
+            }
+        });
+        receiveThread.start();
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         if(list != null)
             list.setAdapter(null);
 
         super.onDestroy();
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //loadingDialog.dismiss();
+    }
+
     public JSONObject[] getProducts(List<JSONObject> barcodes, List<JSONObject> names) {
-        JSONObject[] res = new JSONObject[barcodes.size() + names.size()];
+        List<JSONObject> res = new ArrayList<>();
         int i = 0;
         for (JSONObject p : barcodes) {
             URL url = null;
@@ -137,8 +167,9 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
 
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             try {
+                assert url != null;
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 // Expirar a los 10 segundos si la conexión no se establece
@@ -148,7 +179,7 @@ public class ShoppingCart extends Activity {
                 connection.connect();
 
                 int response = connection.getResponseCode();
-                BufferedReader br = null;
+                BufferedReader br;
                 if (response >= 200 && response <=399) {
                     br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
                     StringBuilder responseStrBuilder = new StringBuilder();
@@ -156,9 +187,10 @@ public class ShoppingCart extends Activity {
                     while ((inputStr = br.readLine()) != null)
                         responseStrBuilder.append(inputStr);
                     JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    obj.put("quantity", p.getInt("quantity"));
-                    res[i] = obj;
-                    i++;
+                    if(!obj.get("product").equals(null)) {
+                        obj.put("quantity", p.getInt("quantity"));
+                        res.add(obj);
+                    }
                 } else {
                     //TODO: Completar o eliminar el else
                 }
@@ -180,8 +212,9 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
 
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             try {
+                assert url != null;
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 // Expirar a los 10 segundos si la conexión no se establece
@@ -199,9 +232,10 @@ public class ShoppingCart extends Activity {
                     while ((inputStr = br.readLine()) != null)
                         responseStrBuilder.append(inputStr);
                     JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    obj.put("quantity", p.getInt("quantity"));
-                    res[i] = obj;
-                    i++;
+                    if (!obj.get("product").equals(null)) {
+                        obj.put("quantity", p.getInt("quantity"));
+                        res.add(obj);
+                    }
                 } else {
                     //TODO: Completar o eliminar el else
                 }
@@ -212,8 +246,7 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
         }
-
-        return res;
+        return res.toArray(new JSONObject[res.size()]);
     }
 
     private void receiveProducts(String stringProducts) {
@@ -265,43 +298,55 @@ public class ShoppingCart extends Activity {
         }
 
         final JSONObject[] finalProducts = completedProducts;
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                assert finalProducts != null;
+                if (finalProducts != null && finalProducts.length > 0) {
+                    list = (ListView) findViewById(R.id.products_list);
+                    assert list != null;
+                    adapter = new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);
+                    list.setItemsCanFocus(false);
+                    list.setLongClickable(true);
+                    list.setAdapter(adapter);
 
-                list=(ListView)findViewById(R.id.products_list);
-                assert list != null;
-                adapter=new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);
-                list.setItemsCanFocus(false);
-                list.setLongClickable(true);
-                list.setAdapter(adapter);
+                    Button btn_pay = (Button) findViewById(R.id.btn_pay);
+                    assert btn_pay != null;
+                    btn_pay.setOnClickListener(new View.OnClickListener() {
 
-                Button btn_pay = (Button)findViewById(R.id.btn_pay);
-                assert btn_pay != null;
-                btn_pay.setOnClickListener( new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO: Redirigir
+                            Toast.makeText(getApplicationContext(),
+                                    "TODO: Redirección",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-                    @Override
-                    public void onClick(View v) {
-                        // TODO: Redirigir
-                        Toast.makeText(getApplicationContext(),
-                                "TODO: Redirección",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                    btnGetCart.setVisibility(View.INVISIBLE);
 
-                btnGetCart.setVisibility(View.INVISIBLE);
+                    //loadingDialog.dismiss();
 
-                loadingDialog.dismiss();
+                    TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
+                    assert shpTitle != null;
 
-                TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
-                assert shpTitle != null;
+                    shpTitle.setVisibility(View.VISIBLE);
+                    list.setVisibility(View.VISIBLE);
+                    btn_pay.setVisibility(View.VISIBLE);
 
-                shpTitle.setVisibility(View.VISIBLE);
-                list.setVisibility(View.VISIBLE);
-                btn_pay.setVisibility(View.VISIBLE);
+                    cartReceived = true;
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            "no products",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void close(Closeable object) {
