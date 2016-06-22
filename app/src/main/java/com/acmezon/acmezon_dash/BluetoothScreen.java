@@ -155,6 +155,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                                     @Override
                                     public void run() {
                                         loadingDialog.dismiss();
+                                        ((Application) getApplication()).setConnection(null);
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
