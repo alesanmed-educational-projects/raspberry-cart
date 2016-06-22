@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Acmezon-Dash</string>
     <string name="connection">Conexión</string>
@@ -35,4 +35,5 @@
     <string name="domain">http://acmezon.ddns.net:8080</string>
     <string name="get_cart">Obtener carrito</string>
     <string name="no_products">No hay productos válidos en el carrito</string>
+    <string name="pay">Enviar al sistema</string>
 </resources>

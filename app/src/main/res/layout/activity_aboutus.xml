@@ -1,0 +1,166 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:clipChildren="true"
+    android:clipToPadding="true"
+    tools:context=".AboutUs">
+
+    <com.dev.sacot41.scviewpager.SCViewPager
+        android:id="@+id/viewpager_main_activity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.dev.sacot41.scviewpager.SCViewPager>
+
+    <com.dev.sacot41.scviewpager.DotsView
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/dotsview_main"
+        />
+
+    <ImageView
+        android:id="@+id/imageview_main_activity_name_tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="40dp"
+        android:paddingRight="50dp"
+        android:layout_alignParentTop="true"
+        android:rotation="-10"
+        android:src="@drawable/name_tag"/>
+
+    <ImageView
+        android:id="@+id/imageview_thisis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="225dp"
+        android:src="@drawable/y_esto_es"/>
+
+    <ImageView
+        android:id="@+id/imageview_acmesupermarket"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="420dp"
+        android:src="@drawable/acmesupermarket"/>
+
+    <ImageView
+        android:id="@+id/imageview_app_made"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="95dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/app_made"/>
+
+    <ImageView
+        android:id="@+id/imageview_techs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="75dp"
+        android:layout_marginTop="400dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/techs"/>
+
+    <ImageView
+        android:id="@+id/imageview_mobile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/mobile"/>
+
+    <ImageView
+        android:id="@+id/imageview_acad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/acad"/>
+
+    <ImageView
+        android:id="@+id/imageview_diploma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/diploma"/>
+
+    <ImageView
+        android:id="@+id/imageview_sedu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/sedu"/>
+
+    <ImageView
+        android:id="@+id/imageview_main_arduino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageview_sedu"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="50dp"
+        android:src="@drawable/arduino"/>
+
+    <ImageView
+        android:id="@+id/imageview_main_raspberry_pi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageview_main_arduino"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/raspberry_pi_logo"/>
+
+    <ImageView
+        android:id="@+id/imageview_nucleo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageview_main_raspberry_pi"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="75dp"
+        android:layout_marginLeft="50dp"
+        android:src="@drawable/nucleo"/>
+
+    <ImageView
+        android:id="@+id/imageview_main_check_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/check_out"/>
+
+    <TextView
+        android:id="@+id/textview_dandelea_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textColor="@color/theme_700"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/imageview_main_check_out"
+        android:autoLink="web"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:text="dandelea.com"/>
+
+    <TextView
+        android:id="@+id/textview_alesanmed_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textColor="@color/theme_700"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/textview_dandelea_link"
+        android:autoLink="web"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:text="alesanmed.com"/>
+
+    <Button
+        android:id="@+id/button_back_aboutus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volver"
+        android:layout_alignParentTop="true"/>
+
+</RelativeLayout>

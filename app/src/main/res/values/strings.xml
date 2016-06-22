@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Acmezon-Dash</string>
     <string name="connection">Connection</string>
     <string name="bluetooth_title">Connect to chosen device</string>
@@ -34,4 +34,5 @@
     <string name="domain">http://acmezon.ddns.net:8080</string>
     <string name="get_cart">Get last cart</string>
     <string name="no_products">No valid products in the cart</string>
+    <string name="pay">Send to system</string>
 </resources>
