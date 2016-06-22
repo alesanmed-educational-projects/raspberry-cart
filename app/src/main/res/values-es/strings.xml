@@ -34,4 +34,5 @@
     <string name="swipe_please">Lista de dispositivos no actualizados.\nPor favor arrastra hacia abajo para escanear nuevos dispositivos a su alrededor.</string>
     <string name="domain">http://acmezon.ddns.net:8080</string>
     <string name="get_cart">Obtener carrito</string>
+    <string name="pay">Enviar al sistema</string>
 </resources>
