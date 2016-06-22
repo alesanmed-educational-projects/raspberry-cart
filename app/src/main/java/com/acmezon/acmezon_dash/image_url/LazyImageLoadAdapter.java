@@ -31,7 +31,7 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
 
     public LazyImageLoadAdapter(Activity a, JSONObject[] products, Activity mainActivity) {
         activity = a;
-        this.products = new ArrayList<JSONObject>(Arrays.asList(products));
+        this.products = new ArrayList<>(Arrays.asList(products));
         this.mainActivity = mainActivity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

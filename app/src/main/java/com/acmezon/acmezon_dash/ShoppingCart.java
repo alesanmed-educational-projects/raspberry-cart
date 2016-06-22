@@ -127,7 +127,7 @@ public class ShoppingCart extends Activity {
     }
 
     public JSONObject[] getProducts(List<JSONObject> barcodes, List<JSONObject> names) {
-        JSONObject[] res = new JSONObject[barcodes.size() + names.size()];
+        List<JSONObject> res = new ArrayList<>();
         int i = 0;
         for (JSONObject p : barcodes) {
             URL url = null;
@@ -137,8 +137,9 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
 
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             try {
+                assert url != null;
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 // Expirar a los 10 segundos si la conexión no se establece
@@ -148,7 +149,7 @@ public class ShoppingCart extends Activity {
                 connection.connect();
 
                 int response = connection.getResponseCode();
-                BufferedReader br = null;
+                BufferedReader br;
                 if (response >= 200 && response <=399) {
                     br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
                     StringBuilder responseStrBuilder = new StringBuilder();
@@ -156,9 +157,10 @@ public class ShoppingCart extends Activity {
                     while ((inputStr = br.readLine()) != null)
                         responseStrBuilder.append(inputStr);
                     JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    obj.put("quantity", p.getInt("quantity"));
-                    res[i] = obj;
-                    i++;
+                    if(!obj.get("product").equals(null)) {
+                        obj.put("quantity", p.getInt("quantity"));
+                        res.add(obj);
+                    }
                 } else {
                     //TODO: Completar o eliminar el else
                 }
@@ -180,8 +182,9 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
 
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             try {
+                assert url != null;
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 // Expirar a los 10 segundos si la conexión no se establece
@@ -199,9 +202,10 @@ public class ShoppingCart extends Activity {
                     while ((inputStr = br.readLine()) != null)
                         responseStrBuilder.append(inputStr);
                     JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    obj.put("quantity", p.getInt("quantity"));
-                    res[i] = obj;
-                    i++;
+                    if (!obj.get("product").equals(null)) {
+                        obj.put("quantity", p.getInt("quantity"));
+                        res.add(obj);
+                    }
                 } else {
                     //TODO: Completar o eliminar el else
                 }
@@ -212,8 +216,7 @@ public class ShoppingCart extends Activity {
                 e.printStackTrace();
             }
         }
-
-        return res;
+        return res.toArray(new JSONObject[res.size()]);
     }
 
     private void receiveProducts(String stringProducts) {
@@ -265,41 +268,46 @@ public class ShoppingCart extends Activity {
         }
 
         final JSONObject[] finalProducts = completedProducts;
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                assert finalProducts != null;
+                if (finalProducts != null && finalProducts.length > 0) {
+                    list = (ListView) findViewById(R.id.products_list);
+                    assert list != null;
+                    adapter = new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);
+                    list.setItemsCanFocus(false);
+                    list.setLongClickable(true);
+                    list.setAdapter(adapter);
 
-                list=(ListView)findViewById(R.id.products_list);
-                assert list != null;
-                adapter=new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);
-                list.setItemsCanFocus(false);
-                list.setLongClickable(true);
-                list.setAdapter(adapter);
+                    Button btn_pay = (Button) findViewById(R.id.btn_pay);
+                    assert btn_pay != null;
+                    btn_pay.setOnClickListener(new View.OnClickListener() {
 
-                Button btn_pay = (Button)findViewById(R.id.btn_pay);
-                assert btn_pay != null;
-                btn_pay.setOnClickListener( new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // TODO: Redirigir
+                            Toast.makeText(getApplicationContext(),
+                                    "TODO: Redirección",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
 
-                    @Override
-                    public void onClick(View v) {
-                        // TODO: Redirigir
-                        Toast.makeText(getApplicationContext(),
-                                "TODO: Redirección",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                    btnGetCart.setVisibility(View.INVISIBLE);
 
-                btnGetCart.setVisibility(View.INVISIBLE);
+                    loadingDialog.dismiss();
 
-                loadingDialog.dismiss();
+                    TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
+                    assert shpTitle != null;
 
-                TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
-                assert shpTitle != null;
-
-                shpTitle.setVisibility(View.VISIBLE);
-                list.setVisibility(View.VISIBLE);
-                btn_pay.setVisibility(View.VISIBLE);
+                    shpTitle.setVisibility(View.VISIBLE);
+                    list.setVisibility(View.VISIBLE);
+                    btn_pay.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.no_products),
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
