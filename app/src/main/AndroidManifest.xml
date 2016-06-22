@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity android:name=".LoginActivity" />
-        <activity android:name=".ShoppingCart" />
+        <activity android:name=".ShoppingCart"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".BluetoothScreen" />
         <activity android:name=".MainMenu">
             <intent-filter>
