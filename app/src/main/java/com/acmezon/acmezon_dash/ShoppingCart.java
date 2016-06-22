@@ -118,12 +118,9 @@ public class ShoppingCart extends Activity {
     }
 
     public void getLastCart(){
-        /*Thread getCart = new Thread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (Looper.myLooper() == null) {
-                    Looper.prepare();
-                }
                 loadingDialog = ProgressDialog.show(ShoppingCart.this, "",
                         getResources().getString(R.string.shopping_cart_loading), true);
 
@@ -131,7 +128,6 @@ public class ShoppingCart extends Activity {
                 loadingDialog.show();
             }
         });
-        getCart.start();*/
         connection.write(Commands.GET_LAST.getBytes());
     }
 
@@ -146,7 +142,12 @@ public class ShoppingCart extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        //loadingDialog.dismiss();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingDialog.dismiss();
+            }
+        });
     }
 
     public JSONObject[] getProducts(List<JSONObject> barcodes, List<JSONObject> names) {
@@ -318,7 +319,7 @@ public class ShoppingCart extends Activity {
 
                     btnGetCart.setVisibility(View.INVISIBLE);
 
-                    //loadingDialog.dismiss();
+                    loadingDialog.dismiss();
 
                     TextView shpTitle = (TextView) findViewById(R.id.shopping_cart_title);
                     assert shpTitle != null;
