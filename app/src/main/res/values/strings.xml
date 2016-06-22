@@ -31,4 +31,5 @@
     <string name="shopping_cart_loading">Receiving Cart…</string>
     <string name="empty_device_name"><![CDATA[<New device>]]></string>
     <string name="swipe_please">Device list not updated.\nPlease swipe down the screen to scan the devices around you.</string>
+    <string name="pay">Send to system</string>
 </resources>

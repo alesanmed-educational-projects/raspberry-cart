@@ -32,4 +32,5 @@
     <string name="shopping_cart_loading">Obteniendo el carrito…</string>
     <string name="empty_device_name"><![CDATA[<Nuevo dispositivo>]]></string>
     <string name="swipe_please">Lista de dispositivos no actualizados.\nPor favor arrastra hacia abajo para escanear nuevos dispositivos a su alrededor.</string>
+    <string name="pay">Enviar al sistema</string>
 </resources>
