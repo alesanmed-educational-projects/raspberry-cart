@@ -1,4 +1,4 @@
-﻿package com.acmezon.acmezon_dash;
+package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -36,6 +36,7 @@ import java.util.List;
 
 public class ShoppingCart extends Activity {
     private Button btnGetCart;
+    private Button btnDeleteCart;
     private DeviceConnector connection;
     private ProgressDialog loadingDialog;
     private boolean cartReceived = false;
@@ -62,6 +63,18 @@ public class ShoppingCart extends Activity {
                     getLastCart();
                 }
             });
+
+            btnDeleteCart = (Button) findViewById(R.id.btn_del);
+
+            assert btnDeleteCart != null;
+
+            btnDeleteCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteCart();
+                }
+            });
+
 
             connection = ((Application) getApplication()).getConnection();
 

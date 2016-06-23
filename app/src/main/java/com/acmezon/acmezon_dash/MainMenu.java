@@ -1,20 +1,25 @@
 package com.acmezon.acmezon_dash;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.goka.blurredgridmenu.GridMenu;
 import com.goka.blurredgridmenu.GridMenuFragment;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Manifest;
 
 public class MainMenu extends AppCompatActivity {
     private GridMenuFragment mGridMenuFragment;
+    private final String FILENAME = "shopping_cart";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +44,11 @@ public class MainMenu extends AppCompatActivity {
                         startActivity(bluetoothScreen);
                         break;
                     case 1: //Shopping cart
-                        if (((Application) getApplication()).getConnection() == null){
+                        File shoppingCartFile = getBaseContext().getFileStreamPath(FILENAME);
+                        Log.d("SHOPPINGCART", "Exists: " + shoppingCartFile.exists());
+
+                        if (((Application) getApplication()).getConnection() == null
+                                && !shoppingCartFile.exists()){
                             Toast.makeText(getApplicationContext(),
                                             getString(R.string.bluetooth_needed),
                                             Toast.LENGTH_LONG).show();
@@ -49,6 +58,19 @@ public class MainMenu extends AppCompatActivity {
                         }
                         break;
                     case 2: //Settings
+                        FileOutputStream outputStream;
+                        String stringProducts = "{\"barcodes\": {\"4949394809461\": 1}}";
+
+                        try {
+                            outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                            outputStream.write(stringProducts.getBytes());
+                            outputStream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(getApplicationContext(),
+                                "Archivo de carrito creado",
+                                Toast.LENGTH_LONG).show();
                         break;
                     case 3: //About us
                         Intent activityAboutUs = new Intent(MainMenu.this, AboutUs.class);
