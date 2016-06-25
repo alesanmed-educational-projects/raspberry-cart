@@ -1,8 +1,10 @@
 package com.acmezon.acmezon_dash;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,6 +39,7 @@ import java.util.List;
 public class ShoppingCart extends Activity {
     private Button btnGetCart;
     private Button btnDeleteCart;
+    private Button btn_pay;
     private DeviceConnector connection;
     private ProgressDialog loadingDialog;
     private boolean cartReceived = false;
@@ -49,6 +52,30 @@ public class ShoppingCart extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_cart);
+
+        btnDeleteCart = (Button) findViewById(R.id.btn_del);
+
+        assert btnDeleteCart != null;
+
+        btnDeleteCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteCart();
+            }
+        });
+
+        btn_pay = (Button) findViewById(R.id.btn_pay);
+        assert btn_pay != null;
+        btn_pay.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO: Redirigir
+                Toast.makeText(getApplicationContext(),
+                        "TODO: Redirección",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         File shoppingCart = getBaseContext().getFileStreamPath(FILENAME);
         Log.d("SHOPPINGCART", "Exists: " + shoppingCart.exists());
@@ -63,18 +90,6 @@ public class ShoppingCart extends Activity {
                     getLastCart();
                 }
             });
-
-            btnDeleteCart = (Button) findViewById(R.id.btn_del);
-
-            assert btnDeleteCart != null;
-
-            btnDeleteCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteCart();
-                }
-            });
-
 
             connection = ((Application) getApplication()).getConnection();
 
@@ -147,9 +162,9 @@ public class ShoppingCart extends Activity {
             } else {
                 list.setVisibility(View.VISIBLE);
 
-                Button btn_pay = (Button) findViewById(R.id.btn_pay);
-                assert btn_pay != null;
                 btn_pay.setVisibility(View.VISIBLE);
+
+                btnDeleteCart.setVisibility(View.VISIBLE);
 
                 btnGetCart.setVisibility(View.INVISIBLE);
 
@@ -158,6 +173,36 @@ public class ShoppingCart extends Activity {
                 shpTitle.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void deleteCart() {
+        new AlertDialog.Builder(this)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setTitle(R.string.delete_cart_dialog_title)
+            .setMessage(R.string.delete_cart_dialog_text)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    File dir = getFilesDir();
+                    File shoppingCartFile = new File(dir, FILENAME);
+                    boolean deleted = shoppingCartFile.delete();
+                    if (deleted) {
+                        if(((Application) getApplication()).getConnection() != null) {
+                            ShoppingCart.this.recreate();
+                        } else {
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                R.string.delete_cart_error,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+
+            })
+            .setNegativeButton(R.string.no, null)
+            .show();
     }
 
     public void getLastCart(){
@@ -347,19 +392,6 @@ public class ShoppingCart extends Activity {
                     list.setLongClickable(true);
                     list.setAdapter(adapter);
 
-                    Button btn_pay = (Button) findViewById(R.id.btn_pay);
-                    assert btn_pay != null;
-                    btn_pay.setOnClickListener(new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            // TODO: Redirigir
-                            Toast.makeText(getApplicationContext(),
-                                    "TODO: Redirección",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-
                     btnGetCart.setVisibility(View.INVISIBLE);
 
                     if (loadingDialog != null)
@@ -381,6 +413,7 @@ public class ShoppingCart extends Activity {
                     shpTitle.setVisibility(View.VISIBLE);
                     list.setVisibility(View.VISIBLE);
                     btn_pay.setVisibility(View.VISIBLE);
+                    btnDeleteCart.setVisibility(View.VISIBLE);
 
                     cartReceived = true;
                 } else {
@@ -397,13 +430,4 @@ public class ShoppingCart extends Activity {
         super.onBackPressed();
     }
 
-    private void close(Closeable object) {
-        if(object == null) return;
-
-        try {
-            object.close();
-        } catch (IOException e) { }
-
-        object = null;
-    }
 }

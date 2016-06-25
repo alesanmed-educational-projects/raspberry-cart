@@ -36,4 +36,7 @@
     <string name="no_products">No valid products in the cart</string>
     <string name="pay">Send to system</string>
     <string name="delete_cart">Delete cart</string>
+    <string name="delete_cart_dialog_title">Delete cart</string>
+    <string name="delete_cart_dialog_text">Are you sure you want to delete the current shopping cart? This operation can not be undone</string>
+    <string name="delete_cart_error">The shopping cart could not be deleted</string>
 </resources>
