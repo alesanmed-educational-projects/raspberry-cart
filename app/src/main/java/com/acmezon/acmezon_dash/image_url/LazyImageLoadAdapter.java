@@ -1,5 +1,6 @@
 package com.acmezon.acmezon_dash.image_url;
 
+import org.json.JSONArray;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -49,6 +50,10 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         ImageView image;
         TextView quantity;
         Button add,sub;
+    }
+
+    public JSONArray getProducts() {
+        return new JSONArray(products);
     }
 
     @Override

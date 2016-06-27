@@ -29,6 +29,7 @@ public class ProductUtils {
             try {
                 url = new URL(context.getString(R.string.domain).concat(
                         String.format("/api/product/barcode/%s", p.getString("barcode"))));
+                System.out.println(url.toString());
             } catch (MalformedURLException | JSONException e) {
                 e.printStackTrace();
             }
@@ -75,6 +76,7 @@ public class ProductUtils {
             try {
                 url = new URL(context.getString(R.string.domain).concat(
                         String.format("/api/product/text/search/%s", p.getString("name"))));
+                System.out.println(url.toString());
             } catch (MalformedURLException | JSONException e) {
                 e.printStackTrace();
             }

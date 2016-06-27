@@ -3,7 +3,9 @@ package com.acmezon.acmezon_dash;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import com.securepreferences.SecurePreferences;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +23,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
+
 public class LoginActivity extends AppCompatActivity {
     Button submit_btn,cancel_btn;
     EditText email_view,password_view;
     SharedPreferences shared;
+    String products_json;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         cancel_btn=(Button)findViewById(R.id.cancel_btn);
         email_view=(EditText)findViewById(R.id.input_email);
         password_view=(EditText)findViewById(R.id.input_password);
+
+        Bundle b = getIntent().getExtras();
+        products_json = b.getString("shopping_cart");
 
         final String color_error = "#ff4444";
 
@@ -58,7 +74,8 @@ public class LoginActivity extends AppCompatActivity {
                     email_view.setBackgroundDrawable(oldBackground);
                     password_view.setBackgroundDrawable(oldBackground);
                     System.out.println("Email: " + email + ", Password: " + password);
-                    launch_post_query(email, password);
+                    System.out.println(products_json);
+                    launch_post_query(email, password, products_json);
                 } else {
                     Toast.makeText(getApplicationContext(),
                             getApplicationContext().getResources().getString(R.string.error_bad_params),
@@ -81,71 +98,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public boolean launch_post_query(String email, String password) {
+    public boolean launch_post_query(String email, String password, String products) {
         storeCredentials(email, MD5(password));
+        new LoginAndSubmitCartTask().execute(email, password, products);
         return true;
-        /*URL url;
-        HttpURLConnection connection = null;
-
-        JSONObject params = new JSONObject();
-
-        try {
-            params.put("email", email);
-            params.put("password", MD5(password));
-            storeCredentials(email, MD5(password));
-            System.out.println(params);
-        } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(),
-                    "Exception: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-
-        try {
-            url = new URL("http://www.TODD.com/");
-            connection = (HttpURLConnection)url.openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            connection.connect();
-
-            //Send request
-            DataOutputStream wr = new DataOutputStream(
-                    connection.getOutputStream ());
-            wr.writeBytes(params.toString());
-            wr.flush();
-            wr.close ();
-
-            int response = connection.getResponseCode();
-            if (response >= 200 && response <=399){
-                storeCredentials(email, password);
-                //TODO: Redirigir a otra vista
-                return true;
-            } else {
-                if (response==400 || response==403) {
-                    Toast.makeText(getApplicationContext(),
-                            getApplicationContext().getResources().getString(R.string.error_authentication),
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getApplicationContext().getResources().getString(R.string.error_server),
-                            Toast.LENGTH_LONG).show();
-                }
-
-                return false;
-            }
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return false;
-
-        } finally {
-
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }*/
     }
 
     private String MD5 (String input) {
@@ -155,6 +111,41 @@ public class LoginActivity extends AppCompatActivity {
             return new BigInteger(1,m.digest()).toString(16);
         } catch(NoSuchAlgorithmException x) {
             return "BadMD5Conversion";
+        }
+    }
+
+    private class LoginAndSubmitCartTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            Looper.prepare();
+            String email = params[0];
+            String password = params[1];
+            String products = params[2];
+
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(getString(R.string.domain).concat("/api/raspberry/cartlines/save"));
+
+            try {
+                //add data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                nameValuePairs.add(new BasicNameValuePair("email", email));
+                nameValuePairs.add(new BasicNameValuePair("password", MD5(password)));
+                nameValuePairs.add(new BasicNameValuePair("products", products));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                //execute http post
+                HttpResponse response = httpclient.execute(httppost);
+                System.out.println(response.toString());
+                System.out.println(response.getStatusLine());
+
+
+            } catch (ClientProtocolException e) {
+
+            } catch (IOException e) {
+
+            }
+            return true;
         }
     }
 

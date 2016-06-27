@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,10 +66,11 @@ public class ShoppingCart extends Activity {
 
             @Override
             public void onClick(View v) {
-                // TODO: Redirigir
-                Toast.makeText(getApplicationContext(),
-                        "TODO: Redirección",
-                        Toast.LENGTH_LONG).show();
+                Intent payActivity = new Intent(ShoppingCart.this, LoginActivity.class);
+                Bundle b = new Bundle();
+                b.putString("shopping_cart", adapter.getProducts().toString());
+                payActivity.putExtras(b);
+                startActivity(payActivity);
             }
         });
 

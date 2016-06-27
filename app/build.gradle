@@ -34,4 +34,5 @@ dependencies {
     compile 'com.github.goka.blurredgridmenu:blurredgridmenu:1.0.2'
     compile 'com.dev.sacot41:scviewpager:0.0.4'
     compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.loopj.android:android-async-http:1.4.9'
 }
