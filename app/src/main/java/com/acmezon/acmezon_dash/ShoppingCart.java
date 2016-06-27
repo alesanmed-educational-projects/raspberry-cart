@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.acmezon.acmezon_dash.bluetooth.BluetoothResponseHandler;
 import com.acmezon.acmezon_dash.bluetooth.Commands;
 import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
+import com.acmezon.acmezon_dash.bluetooth.security.Sha;
 import com.acmezon.acmezon_dash.image_url.LazyImageLoadAdapter;
 import com.acmezon.acmezon_dash.products.ProductUtils;
 
@@ -27,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
 
 public class ShoppingCart extends Activity {
     private Button btnGetCart;
@@ -231,6 +233,12 @@ public class ShoppingCart extends Activity {
     }
 
     private void receiveProducts(final String stringProducts) {
+        try {
+            Log.d("SHOPPINGCART", Sha.hash256(stringProducts));
+        } catch (NoSuchAlgorithmException e) {
+            Log.d("SHOPPINGCART", e.getMessage());
+        }
+
         final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, stringProducts);
 
         runOnUiThread(new Runnable() {
