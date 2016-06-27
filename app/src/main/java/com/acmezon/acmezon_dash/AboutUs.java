@@ -1,7 +1,5 @@
 package com.acmezon.acmezon_dash;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,8 +20,6 @@ public class AboutUs extends FragmentActivity {
 
     private static final int NUM_PAGES = 5;
 
-    private SCViewPager mViewPager;
-    private SCViewPagerAdapter mPageAdapter;
     private DotsView mDotsView;
 
     @Override
@@ -34,17 +30,17 @@ public class AboutUs extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_aboutus);
 
-        mViewPager = (SCViewPager) findViewById(R.id.viewpager_main_activity);
+        SCViewPager mViewPager = (SCViewPager) findViewById(R.id.viewpager_main_activity);
         mDotsView = (DotsView) findViewById(R.id.dotsview_main);
         mDotsView.setDotRessource(R.drawable.dot_selected, R.drawable.dot_unselected);
         mDotsView.setNumberOfPage(NUM_PAGES);
 
-        mPageAdapter = new SCViewPagerAdapter(getSupportFragmentManager());
+        SCViewPagerAdapter mPageAdapter = new SCViewPagerAdapter(getSupportFragmentManager());
         mPageAdapter.setNumberOfPage(NUM_PAGES);
         mPageAdapter.setFragmentBackgroundColor(R.color.theme_100);
         mViewPager.setAdapter(mPageAdapter);
 
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }

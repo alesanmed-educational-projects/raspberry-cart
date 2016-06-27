@@ -332,8 +332,4 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
-
-    public static BluetoothScreen getInstance(){
-        return instance;
-    }
 }

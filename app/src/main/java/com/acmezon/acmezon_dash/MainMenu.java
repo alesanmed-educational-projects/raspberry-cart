@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Manifest;
 
 public class MainMenu extends AppCompatActivity {
     private GridMenuFragment mGridMenuFragment;

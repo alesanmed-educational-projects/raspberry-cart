@@ -3,7 +3,7 @@ package com.acmezon.acmezon_dash;
 import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
 
 /**
- * Created by donzok on 8/06/16.
+ * Created by alesanmed on 8/06/16.
  */
 public class Application extends android.app.Application {
     private DeviceConnector connection;
