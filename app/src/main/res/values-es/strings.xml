@@ -43,4 +43,6 @@
     <string name="error_receive_cart">Error al recibir el carrito</string>
     <string name="past_cart">Carritos antiguos</string>
     <string name="past_cart_desc">Obtener carritos antiguos</string>
+    <string name="cart_file">Archivo de carrito</string>
+    <string name="cart_file_desc">Crear archivo de carrito</string>
 </resources>
