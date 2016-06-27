@@ -9,8 +9,8 @@ import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Created by Donzok on 20/06/2016.
+/*
+ * Created by alesanmed on 20/06/2016.
  */
 public class BluetoothResponseHandler {
     public BluetoothResponseHandler() {

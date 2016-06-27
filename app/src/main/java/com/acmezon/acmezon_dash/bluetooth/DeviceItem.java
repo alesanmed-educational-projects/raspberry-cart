@@ -1,6 +1,6 @@
 package com.acmezon.acmezon_dash.bluetooth;
 
-/**
+/*
  * Created by Matt on 5/12/2015.
  */
 public class DeviceItem {
@@ -28,11 +28,6 @@ public class DeviceItem {
     public DeviceItem(String name, String address, String connected){
         this.deviceName = name;
         this.address = address;
-        if (connected == "true") {
-            this.connected = true;
-        }
-        else {
-            this.connected = false;
-        }
+        this.connected = connected.equals("true");
     }
 }

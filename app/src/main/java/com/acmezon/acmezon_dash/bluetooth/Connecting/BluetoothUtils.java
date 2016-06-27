@@ -15,7 +15,7 @@ public class BluetoothUtils {
     private static final String TAG = "BluetoothUtils";
     private static final boolean D = true;
 
-    private static final Map<String, String> uuidsDescriptions = new HashMap<String, String>();
+    private static final Map<String, String> uuidsDescriptions = new HashMap<>();
 
     static {
         uuidsDescriptions.put("0001", "SDP");

@@ -2,7 +2,7 @@ package com.acmezon.acmezon_dash.bluetooth;
 
 import com.acmezon.acmezon_dash.R;
 
-/**
+/*
  * Created by Donzok on 20/06/2016.
  */
 public class Messages {

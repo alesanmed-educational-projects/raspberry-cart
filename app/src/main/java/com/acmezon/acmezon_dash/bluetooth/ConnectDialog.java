@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.acmezon.acmezon_dash.R;
 
-/**
- * Created by donzok on 6/06/16.
+/*
+ * Created by alesanmed on 6/06/16.
  */
 public class ConnectDialog extends DialogFragment {
     String dName;
@@ -31,8 +31,8 @@ public class ConnectDialog extends DialogFragment {
     }
 
     public interface ConnectDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogPositiveClick(DialogFragment dialog);
+        void onDialogNegativeClick(DialogFragment dialog);
     }
 
     ConnectDialogListener mListener;

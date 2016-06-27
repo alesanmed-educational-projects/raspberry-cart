@@ -11,7 +11,7 @@ import com.acmezon.acmezon_dash.R;
 
 import java.util.List;
 
-/**
+/*
  * Created by alesanmed on 5/06/16.
  */
 public class DeviceItemListAdapter extends ArrayAdapter<DeviceItem>{
