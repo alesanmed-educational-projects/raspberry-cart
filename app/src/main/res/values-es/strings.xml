@@ -41,4 +41,6 @@
     <string name="delete_cart_dialog_text">¿Estás seguro de que deseas eliminar el carrito actual? Esta operación no se puede deshacer</string>
     <string name="delete_cart_error">El carrito no se ha podido borrar</string>
     <string name="error_receive_cart">Error al recibir el carrito</string>
+    <string name="past_cart">Carritos antiguos</string>
+    <string name="past_cart_desc">Obtener carritos antiguos</string>
 </resources>
