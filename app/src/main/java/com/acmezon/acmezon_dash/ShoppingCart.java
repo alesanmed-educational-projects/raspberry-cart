@@ -38,6 +38,7 @@ public class ShoppingCart extends Activity {
     private ProgressDialog loadingDialog;
     private boolean cartReceived = false;
     private final String FILENAME = "shopping_cart";
+    private String stringProducts;
 
     ListView list;
     LazyImageLoadAdapter adapter;
@@ -101,8 +102,22 @@ public class ShoppingCart extends Activity {
                         case Commands.LAST_CART_REQUESTED:
                             getLastCart();
                             break;
+                        case Commands.CHECKSUM_VALID:
+                            receiveProducts(stringProducts);
+                            break;
+                        case Commands.CHECKSUM_INVALID:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadingDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.error_receive_cart),
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
                         default:
-                            receiveProducts(data);
+                            checkProducts(data);
                             break;
                     }
                 }
@@ -232,14 +247,31 @@ public class ShoppingCart extends Activity {
         });
     }
 
-    private void receiveProducts(final String stringProducts) {
+    private void checkProducts(String products) {
+        String checksum = null;
+        stringProducts = products;
         try {
-            Log.d("SHOPPINGCART", Sha.hash256(stringProducts));
+            checksum = Sha.hash256(products);
         } catch (NoSuchAlgorithmException e) {
             Log.d("SHOPPINGCART", e.getMessage());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingDialog.dismiss();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.error_receive_cart),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
 
-        final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, stringProducts);
+        String command = String.format("[checksum %s]", checksum);
+        connection.write(command.getBytes());
+    }
+
+    private void receiveProducts(final String productsReceived) {
+        final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, productsReceived);
+        this.stringProducts = null;
 
         runOnUiThread(new Runnable() {
             @Override
@@ -261,7 +293,7 @@ public class ShoppingCart extends Activity {
 
                     try {
                         outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-                        outputStream.write(stringProducts.getBytes());
+                        outputStream.write(productsReceived.getBytes());
                         outputStream.close();
                     } catch (Exception e) {
                         e.printStackTrace();

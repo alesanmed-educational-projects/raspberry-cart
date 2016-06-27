@@ -32,5 +32,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:9.0.2'
     compile 'com.scottyab:secure-preferences-lib:0.1.4'
     compile 'com.github.goka.blurredgridmenu:blurredgridmenu:1.0.2'
-    compile "com.dev.sacot41:scviewpager:0.0.4"
+    compile 'com.dev.sacot41:scviewpager:0.0.4'
+    compile 'com.android.support:support-v4:23.4.0'
 }

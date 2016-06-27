@@ -6,4 +6,6 @@ package com.acmezon.acmezon_dash.bluetooth;
 public class Commands {
     public static final String GET_LAST = "[get last]";
     public static final String LAST_CART_REQUESTED = "get_last_cart";
+    public static final String CHECKSUM_VALID = "checksum valid";
+    public static final String CHECKSUM_INVALID = "checksum invalid";
 }
