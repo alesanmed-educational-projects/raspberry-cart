@@ -2,10 +2,16 @@ package com.acmezon.acmezon_dash;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,24 +36,28 @@ import java.util.Locale;
 
 public class PastCartsActivity extends ListActivity {
     private TextView pastCartsEmpty;
+    private final DateFormat format = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.ENGLISH);
     private List<Date> pastCarts;
-    private DeviceConnector connection;
     private ProgressDialog loadingDialog;
+    private final String ACTION_CLOSE = "com.acmezon.acmezon_dash.ACTION_CLOSE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_past_carts);
-
-        pastCartsEmpty = (TextView) findViewById(R.id.past_carts_list_title);
+        pastCartsEmpty = (TextView) findViewById(R.id.past_carts_empty);
         pastCarts = new ArrayList<>();
+
+        IntentFilter filter = new IntentFilter(ACTION_CLOSE);
+        PastCartsReceiver pastCartsReceiver = new PastCartsReceiver();
+        registerReceiver(pastCartsReceiver, filter);
 
         final DateListAdapter cartsAdapter = new DateListAdapter(
                 this, R.layout.shopping_cart_row, pastCarts);
 
         setListAdapter(cartsAdapter);
 
-        connection = ((Application) getApplication()).getConnection();
+        DeviceConnector connection = ((Application) getApplication()).getConnection();
         BluetoothResponseHandler bluetoothHandler = new BluetoothResponseHandler() {
             @Override
             public void onDeviceName(String deviceName) {
@@ -59,32 +69,41 @@ public class PastCartsActivity extends ListActivity {
                 try {
                     JSONObject cartsJSON = new JSONObject(data);
                     String carts = cartsJSON.getString("carts");
-                    String[] cartsDates = carts.split(";");
-                    DateFormat format = new SimpleDateFormat("yyyy.M.d.H.mm.ss", Locale.ENGLISH);
-                    for (String cartsDate : cartsDates) {
-                        try {
-                            pastCarts.add(format.parse(cartsDate));
-                        } catch (ParseException e) {
-                            Log.d("PASTCARTS", e.getMessage());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(PastCartsActivity.this,
-                                            getString(R.string.past_cart_parse_error),
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            });
+                    if(!carts.equals("")) {
+                        String[] cartsDates = carts.split(";");
+                        for (String cartsDate : cartsDates) {
+                            try {
+                                pastCarts.add(format.parse(cartsDate));
+                            } catch (ParseException e) {
+                                Log.d("PASTCARTS", e.getMessage());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(PastCartsActivity.this,
+                                                getString(R.string.past_cart_parse_error),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
                         }
-                    }
 
-                    Collections.reverse(pastCarts);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            cartsAdapter.notifyDataSetChanged();
-                            loadingDialog.dismiss();
-                        }
-                    });
+                        Collections.reverse(pastCarts);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                cartsAdapter.notifyDataSetChanged();
+                                loadingDialog.dismiss();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loadingDialog.dismiss();
+                                pastCartsEmpty.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 }catch (JSONException e) {
                     Log.d("PASTCARTS", e.getMessage());
                     runOnUiThread(new Runnable() {
@@ -128,5 +147,24 @@ public class PastCartsActivity extends ListActivity {
         });
 
         connection.write(Commands.GET_OLD_CARTS.getBytes());
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        Date selected = (Date) l.getItemAtPosition(position);
+
+        Intent cartPreview = new Intent(PastCartsActivity.this, CartPreviewActivity.class);
+        cartPreview.putExtra("cart", format.format(selected));
+        startActivity(cartPreview);
+    }
+
+    class PastCartsReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(ACTION_CLOSE)) {
+                PastCartsActivity.this.finish();
+            }
+        }
     }
 }

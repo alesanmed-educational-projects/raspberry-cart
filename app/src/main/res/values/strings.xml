@@ -109,4 +109,6 @@
     <string name="past_cart_error">Error receiving carts</string>
     <string name="past_cart_parse_error">Error parsing date</string>
     <string name="restore_cart">Restore this cart</string>
+    <string name="restore_cart_subtitle">Are you sure you want to restore this cart?\\nThis will be overwrite the current cart in the phone</string>
+    <string name="cart_restored">Shopping cart restored</string>
 </resources>

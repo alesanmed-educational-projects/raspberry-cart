@@ -51,4 +51,6 @@
     <string name="past_cart_error">Error recibiendo los carritos</string>
     <string name="past_cart_parse_error">Error al interpretar una fecha</string>
     <string name="restore_cart">Restaurar este carrito</string>
+    <string name="restore_cart_subtitle">¿Estás seguro de que deseas restaurar este carrito?\nEsto sobreescribirá el carrito que haya en el teléfono</string>
+    <string name="cart_restored">Carrito restaurado</string>
 </resources>

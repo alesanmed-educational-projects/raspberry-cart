@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.acmezon.acmezon_dash.CartPreviewActivity;
 import com.acmezon.acmezon_dash.R;
 
 import org.json.JSONException;
@@ -92,6 +93,11 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             holder.add = (Button) vi.findViewById(R.id.btn_add);
             holder.sub = (Button) vi.findViewById(R.id.btn_substract);
 
+            if(activity.getClass().equals(CartPreviewActivity.class)) {
+                holder.add.setVisibility(View.INVISIBLE);
+                holder.sub.setVisibility(View.INVISIBLE);
+            }
+
             vi.setTag(holder);
         } else {
             holder = (ViewHolder) vi.getTag();
@@ -154,62 +160,63 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             }
         });
 
-        holder.name.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity);
-                alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
-                alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                        holder.name.getText() + "?");
-                alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        remove(pos);
-                        notifyDataSetChanged();
-                        dialog.dismiss();
-                    }
-                });
-                alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-                return false;
-            }
-        });
+        if(!activity.getClass().equals(CartPreviewActivity.class)) {
+            holder.name.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(
+                            mainActivity);
+                    alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
+                    alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                            holder.name.getText() + "?");
+                    alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            remove(pos);
+                            notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.show();
+                    return false;
+                }
+            });
 
+            holder.image.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(
+                            mainActivity);
+                    alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
+                    alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                            holder.name.getText() + "?");
+                    alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            remove(pos);
+                            notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    alert.show();
+                    return false;
+                }
+            });
+        }
 
-        holder.image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity);
-                alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
-                alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                    holder.name.getText() + "?");
-                alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        remove(pos);
-                        notifyDataSetChanged();
-                        dialog.dismiss();
-                    }
-                });
-                alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-                return false;
-            }
-        });
-
-            return vi;
+        return vi;
     }
 
 }

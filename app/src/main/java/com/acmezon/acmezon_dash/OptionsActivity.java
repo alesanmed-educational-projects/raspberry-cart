@@ -1,7 +1,9 @@
 package com.acmezon.acmezon_dash;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import java.io.FileOutputStream;
 
 public class OptionsActivity extends AppCompatActivity {
     private final String FILENAME = "shopping_cart";
+    private final String ACTION_CLOSE = "com.acmezon.acmezon_dash.ACTION_CLOSE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +22,10 @@ public class OptionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_options);
 
         initListeners();
+
+        IntentFilter filter = new IntentFilter(ACTION_CLOSE);
+        OptionsReceiver optionsReceiver = new OptionsReceiver();
+        registerReceiver(optionsReceiver, filter);
     }
 
     private void initListeners() {
@@ -66,5 +73,15 @@ public class OptionsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    class OptionsReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(ACTION_CLOSE)) {
+                OptionsActivity.this.finish();
+            }
+        }
     }
 }

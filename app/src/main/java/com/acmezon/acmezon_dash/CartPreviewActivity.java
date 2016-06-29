@@ -1,7 +1,11 @@
 package com.acmezon.acmezon_dash;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +32,7 @@ public class CartPreviewActivity extends AppCompatActivity {
     private ProgressDialog loadingDialog;
     private final String FILENAME = "shopping_cart";
     private String stringProducts;
+    private final String ACTION_CLOSE = "com.acmezon.acmezon_dash.ACTION_CLOSE";
 
     ListView list;
     LazyImageLoadAdapter adapter;
@@ -47,6 +52,9 @@ public class CartPreviewActivity extends AppCompatActivity {
                 restore();
             }
         });
+
+        Bundle extras = getIntent().getExtras();
+        String requestedCart = extras.getString("cart");
 
         connection = ((Application) getApplication()).getConnection();
 
@@ -71,6 +79,7 @@ public class CartPreviewActivity extends AppCompatActivity {
                 switch (data.trim()){
                     case Commands.CHECKSUM_VALID:
                         receiveProducts(stringProducts);
+                        break;
                     case Commands.CHECKSUM_INVALID:
                         runOnUiThread(new Runnable() {
                             @Override
@@ -82,6 +91,7 @@ public class CartPreviewActivity extends AppCompatActivity {
                             }
                         });
                         finish();
+                        break;
                     default:
                         checkProducts(data);
                 }
@@ -105,7 +115,7 @@ public class CartPreviewActivity extends AppCompatActivity {
         };
 
         connection.setHandler(mHandler);
-        connection.write("[get ]".getBytes());
+        connection.write(String.format("[get %s]", requestedCart).getBytes());
     }
 
     @Override
@@ -168,19 +178,15 @@ public class CartPreviewActivity extends AppCompatActivity {
                     if (loadingDialog != null)
                         loadingDialog.dismiss();
 
-                    FileOutputStream outputStream;
-
-                    try {
-                        outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-                        outputStream.write(productsReceived.getBytes());
-                        outputStream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    stringProducts = productsReceived;
                 } else {
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.no_products),
                             Toast.LENGTH_LONG).show();
+
+                    finish();
                 }
             }
         });
@@ -192,6 +198,36 @@ public class CartPreviewActivity extends AppCompatActivity {
     }
 
     private void restore() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                this);
+        alert.setTitle(getString(R.string.restore_cart));
+        alert.setMessage(getString(R.string.restore_cart_subtitle));
+        alert.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FileOutputStream outputStream;
+                try {
+                    outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                    outputStream.write(stringProducts.getBytes());
+                    outputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Intent closeIntent = new Intent(ACTION_CLOSE);
+                sendBroadcast(closeIntent);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.cart_restored),
+                        Toast.LENGTH_LONG).show();
 
+                finish();
+            }
+        });
+        alert.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 }
