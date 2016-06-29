@@ -103,4 +103,10 @@
     <string name="past_cart_desc">Get other carts</string>
     <string name="cart_file">Cart file</string>
     <string name="cart_file_desc">Create cart file</string>
+    <string name="cart_file_created">Cart file created</string>
+    <string name="past_cart_empty">There are no old shopping carts in the dash</string>
+    <string name="past_carts_loading">Receiving past carts…</string>
+    <string name="past_cart_error">Error receiving carts</string>
+    <string name="past_cart_parse_error">Error parsing date</string>
+    <string name="restore_cart">Restore this cart</string>
 </resources>

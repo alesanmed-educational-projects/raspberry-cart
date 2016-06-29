@@ -57,19 +57,8 @@ public class MainMenu extends AppCompatActivity {
                         }
                         break;
                     case 2: //Settings
-                        FileOutputStream outputStream;
-                        String stringProducts = "{\"products\": {\"dream\": 1}, \"barcodes\": {\"0049325377060\": 1}}";
-
-                        try {
-                            outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-                            outputStream.write(stringProducts.getBytes());
-                            outputStream.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(getApplicationContext(),
-                                "Archivo de carrito creado",
-                                Toast.LENGTH_LONG).show();
+                        Intent activityOptions = new Intent(MainMenu.this, OptionsActivity.class);
+                        startActivity(activityOptions);
                         break;
                     case 3: //About us
                         Intent activityAboutUs = new Intent(MainMenu.this, AboutUs.class);

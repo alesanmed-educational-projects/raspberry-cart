@@ -45,4 +45,10 @@
     <string name="past_cart_desc">Obtener carritos antiguos</string>
     <string name="cart_file">Archivo de carrito</string>
     <string name="cart_file_desc">Crear archivo de carrito</string>
+    <string name="cart_file_created">Archivo de carrito creado</string>
+    <string name="past_cart_empty">No hay carritos de la compra antiguos en la barra</string>
+    <string name="past_carts_loading">Recibiendo carritos antiguos…</string>
+    <string name="past_cart_error">Error recibiendo los carritos</string>
+    <string name="past_cart_parse_error">Error al interpretar una fecha</string>
+    <string name="restore_cart">Restaurar este carrito</string>
 </resources>
