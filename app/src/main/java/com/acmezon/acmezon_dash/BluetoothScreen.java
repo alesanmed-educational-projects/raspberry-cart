@@ -73,7 +73,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
-        setContentView(R.layout.activity_home_screen);
+        setContentView(R.layout.activity_bluetooth_screen);
 
         deviceItemList = new ArrayList<>();
         BTAdapter = BluetoothAdapter.getDefaultAdapter();

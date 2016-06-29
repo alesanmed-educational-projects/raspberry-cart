@@ -11,4 +11,5 @@
     <color name="gray">#999999</color>
     <color name="white">#FFFFFF</color>
     <color name="theme_700">#455A64</color>
+    <color name="defaultBg">#FAFAFA</color>
 </resources>

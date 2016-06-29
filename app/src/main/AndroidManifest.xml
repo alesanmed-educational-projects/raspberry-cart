@@ -20,6 +20,7 @@
             android:name=".ShoppingCart"
             android:configChanges="orientation|screenSize" />
         <activity android:name=".BluetoothScreen" />
+        <activity android:name=".Options" />
         <activity android:name=".MainMenu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +39,10 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".OptionsActivity" />
+        <activity android:name=".PastCartsActivity" />
+        <activity android:name=".CartPreviewActivity"></activity>
     </application>
 
 </manifest>

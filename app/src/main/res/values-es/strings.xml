@@ -46,4 +46,14 @@
     <string name="submit_success">El carrito de compra ha sido entregado con éxito</string>
     <string name="title_activity_settings">Ajustes</string>
     <string name="error_not_available_product">Error: Algun producto no estaba disponible.</string>
+    <string name="cart_file">Archivo de carrito</string>
+    <string name="cart_file_desc">Crear archivo de carrito</string>
+    <string name="cart_file_created">Archivo de carrito creado</string>
+    <string name="past_cart_empty">No hay carritos de la compra antiguos en la barra</string>
+    <string name="past_carts_loading">Recibiendo carritos antiguos…</string>
+    <string name="past_cart_error">Error recibiendo los carritos</string>
+    <string name="past_cart_parse_error">Error al interpretar una fecha</string>
+    <string name="restore_cart">Restaurar este carrito</string>
+    <string name="restore_cart_subtitle">¿Estás seguro de que deseas restaurar este carrito?\nEsto sobreescribirá el carrito que haya en el teléfono</string>
+    <string name="cart_restored">Carrito restaurado</string>
 </resources>

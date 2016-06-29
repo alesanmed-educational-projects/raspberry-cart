@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    tools:context=".CartPreviewActivity">
+
+    <TextView
+        android:id="@+id/shopping_cart_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/cart"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+        android:layout_gravity="center"
+        android:gravity="top|center"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
+
+    <ListView
+        android:id="@+id/products_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shopping_cart_title"
+        android:layout_above="@+id/btn_restore"
+        android:longClickable="true"/>
+
+    <Button
+        android:id="@+id/btn_restore"
+        android:text="@string/restore_cart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
