@@ -43,4 +43,7 @@
     <string name="error_receive_cart">Error al recibir el carrito</string>
     <string name="past_cart">Carritos antiguos</string>
     <string name="past_cart_desc">Obtener carritos antiguos</string>
+    <string name="submit_success">El carrito de compra ha sido entregado con éxito</string>
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="error_not_available_product">Error: Algun producto no estaba disponible.</string>
 </resources>

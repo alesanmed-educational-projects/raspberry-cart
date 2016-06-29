@@ -7,12 +7,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.securepreferences.SecurePreferences;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -31,6 +35,7 @@ import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 public class LoginActivity extends AppCompatActivity {
     Button submit_btn,cancel_btn;
@@ -73,8 +78,6 @@ public class LoginActivity extends AppCompatActivity {
                         password.length() >= 8 && password.length() <= 32) {
                     email_view.setBackgroundDrawable(oldBackground);
                     password_view.setBackgroundDrawable(oldBackground);
-                    System.out.println("Email: " + email + ", Password: " + password);
-                    System.out.println(products_json);
                     launch_post_query(email, password, products_json);
                 } else {
                     Toast.makeText(getApplicationContext(),
@@ -115,9 +118,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private class LoginAndSubmitCartTask extends AsyncTask<String, Void, Boolean> {
+        private Boolean success;
+        private String message;
 
         @Override
         protected Boolean doInBackground(String... params) {
+            Boolean result = false;
+
             Looper.prepare();
             String email = params[0];
             String password = params[1];
@@ -136,17 +143,53 @@ public class LoginActivity extends AppCompatActivity {
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 //execute http post
                 HttpResponse response = httpclient.execute(httppost);
-                System.out.println(response.toString());
-                System.out.println(response.getStatusLine());
+                Log.d("SUBMIT", response.getStatusLine().toString());
 
-
-            } catch (ClientProtocolException e) {
-
-            } catch (IOException e) {
-
+                if (response.getStatusLine().getStatusCode()>=200 && response.getStatusLine().getStatusCode()<=399) {
+                    // 200
+                    result = true;
+                } else {
+                    // 500
+                    String json_string = EntityUtils.toString(response.getEntity());
+                    JSONObject response_body = new JSONObject(json_string);
+                    this.message = response_body.getString("message");
+                    result = false;
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
-            return true;
+            this.success = result;
+            return result;
         }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                finish();
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.submit_success),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("SUBMIT", message);
+                String message_toast;
+                if (message=="Internal Server Error") {
+                    message_toast = getString(R.string.error_server);
+                    finish();
+                } else if (message=="Some product not available") {
+                    message_toast = getString(R.string.error_not_available_product);
+                    finish();
+                } else if (message=="Authentication failed") {
+                    message_toast = getString(R.string.error_authentication);
+                } else {
+                    message_toast = getString(R.string.error_server);
+                    finish();
+                }
+                Toast.makeText(getApplicationContext(),
+                        message_toast,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     private void storeCredentials(String email, String password) {

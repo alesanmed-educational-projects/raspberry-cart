@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class ShoppingCart extends Activity {
     private Button btnGetCart;
@@ -66,11 +67,16 @@ public class ShoppingCart extends Activity {
 
             @Override
             public void onClick(View v) {
-                Intent payActivity = new Intent(ShoppingCart.this, LoginActivity.class);
-                Bundle b = new Bundle();
-                b.putString("shopping_cart", adapter.getProducts().toString());
-                payActivity.putExtras(b);
-                startActivity(payActivity);
+                if (adapter.valid) {
+                    finish();
+                    Intent payActivity = new Intent(ShoppingCart.this, LoginActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("shopping_cart", adapter.getProducts().toString());
+                    payActivity.putExtras(b);
+                    startActivity(payActivity);
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_not_available_product), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -272,13 +278,13 @@ public class ShoppingCart extends Activity {
     }
 
     private void receiveProducts(final String productsReceived) {
-        final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, productsReceived);
+        final List<JSONObject> finalProducts = ProductUtils.receiveProducts(this, productsReceived);
         this.stringProducts = null;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (finalProducts != null && finalProducts.length > 0) {
+                if (finalProducts != null && !finalProducts.isEmpty()) {
                     list = (ListView) findViewById(R.id.products_list);
                     assert list != null;
                     adapter = new LazyImageLoadAdapter(ShoppingCart.this, finalProducts, ShoppingCart.this);

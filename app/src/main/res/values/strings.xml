@@ -101,4 +101,6 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="past_cart">Past carts</string>
     <string name="past_cart_desc">Get other carts</string>
+    <string name="submit_success">The shopping cart has been successfully submited</string>
+    <string name="error_not_available_product">Error: Some product was not available</string>
 </resources>

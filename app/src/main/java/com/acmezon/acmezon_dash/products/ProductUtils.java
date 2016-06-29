@@ -18,108 +18,86 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by alesanmed on 27/06/2016.
- */
 public class ProductUtils {
-    private static JSONObject[] getProducts(Context context, List<JSONObject> barcodes, List<JSONObject> names) {
+    private static List<JSONObject> getProducts(Context context, List<JSONObject> barcodes, List<JSONObject> names) {
         List<JSONObject> res = new ArrayList<>();
+        JSONObject aux_product;
         for (JSONObject p : barcodes) {
-            URL url = null;
             try {
-                url = new URL(context.getString(R.string.domain).concat(
-                        String.format("/api/product/barcode/%s", p.getString("barcode"))));
-                System.out.println(url.toString());
-            } catch (MalformedURLException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            HttpURLConnection connection;
-            try {
-                assert url != null;
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                // Expirar a los 10 segundos si la conexión no se establece
-                connection.setConnectTimeout(10000);
-                // Esperar solo 15 segundos para que finalice la lectura
-                connection.setReadTimeout(15000);
-                connection.connect();
-
-                int response = connection.getResponseCode();
-                BufferedReader br;
-                if (response >= 200 && response <=399) {
-                    br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-                    StringBuilder responseStrBuilder = new StringBuilder();
-                    String inputStr;
-                    while ((inputStr = br.readLine()) != null)
-                        responseStrBuilder.append(inputStr);
-                    JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    if(!obj.get("product").equals(null)) {
-                        obj.put("quantity", p.getInt("quantity"));
-                        res.add(obj);
-                    }
-                } else {
-                    //TODO: Completar o eliminar el else
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                aux_product = httpProductQuery(context.getString(R.string.domain).concat(
+                        String.format("/api/product/barcode/%s", p.getString("barcode"))), p.getInt("quantity"));
+                res.add(aux_product);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
         }
 
         for (JSONObject p: names) {
-            URL url = null;
             try {
-                url = new URL(context.getString(R.string.domain).concat(
-                        String.format("/api/product/text/search/%s", p.getString("name"))));
-                System.out.println(url.toString());
-            } catch (MalformedURLException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            HttpURLConnection connection;
-            try {
-                assert url != null;
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                // Expirar a los 10 segundos si la conexión no se establece
-                connection.setConnectTimeout(10000);
-                // Esperar solo 15 segundos para que finalice la lectura
-                connection.setReadTimeout(15000);
-                connection.connect();
-
-                int response = connection.getResponseCode();
-                BufferedReader br;
-                if (response >= 200 && response <=399) {
-                    br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
-                    StringBuilder responseStrBuilder = new StringBuilder();
-                    String inputStr;
-                    while ((inputStr = br.readLine()) != null)
-                        responseStrBuilder.append(inputStr);
-                    JSONObject obj = new JSONObject(responseStrBuilder.toString());
-                    if (!obj.get("product").equals(null)) {
-                        obj.put("quantity", p.getInt("quantity"));
-                        res.add(obj);
-                    }
-                } else {
-                    //TODO: Completar o eliminar el else
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+                aux_product = httpProductQuery(context.getString(R.string.domain).concat(
+                        String.format("/api/product/text/search/%s", p.getString("name"))), p.getInt("quantity"));
+                res.add(aux_product);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return res.toArray(new JSONObject[res.size()]);
+        return res;
     }
 
-    public static JSONObject[] receiveProducts(Context context, final String stringProducts) {
-        JSONObject[] completedProducts = null;
+    private static JSONObject httpProductQuery (String urlString, int quantity) {
+        JSONObject result = new JSONObject();
+        URL url = null;
+        try {
+            url = new URL(urlString);
+            System.out.println(url.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        HttpURLConnection connection;
+        try {
+            assert url != null;
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            // Expirar a los 10 segundos si la conexión no se establece
+            connection.setConnectTimeout(10000);
+            // Esperar solo 15 segundos para que finalice la lectura
+            connection.setReadTimeout(15000);
+            connection.connect();
+
+            int response = connection.getResponseCode();
+            BufferedReader br;
+            if (response >= 200 && response <=399) {
+                br = new BufferedReader(new InputStreamReader((connection.getInputStream())));
+                StringBuilder responseStrBuilder = new StringBuilder();
+                String inputStr;
+                while ((inputStr = br.readLine()) != null)
+                    responseStrBuilder.append(inputStr);
+                JSONObject obj = new JSONObject(responseStrBuilder.toString());
+                JSONObject product = obj.getJSONObject("product");
+                if(!obj.get("product").equals(null)) {
+                    result.put("_id", product.getInt("_id"));
+                    result.put("quantity", quantity);
+                    result.put("name", product.getString("name"));
+                    result.put("image", product.getString("image"));
+                    result.put("available", obj.getBoolean("available"));
+                }
+            } else {
+                //TODO: Completar o eliminar el else
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+
+    }
+
+    public static List<JSONObject> receiveProducts(Context context, final String stringProducts) {
+        List<JSONObject> completedProducts = null;
         try {
             JSONObject productsJSON = new JSONObject(stringProducts);
 

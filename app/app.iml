@@ -139,5 +139,6 @@
     <orderEntry type="library" exported="" name="appcompat-v7-23.4.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-common-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="secure-preferences-lib-0.1.4" level="project" />
+    <orderEntry type="library" exported="" name="android-android-23" level="project" />
   </component>
 </module>

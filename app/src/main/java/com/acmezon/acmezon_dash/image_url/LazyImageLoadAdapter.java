@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,14 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
     private List<JSONObject> products;
     public ImageLoader imageLoader;
     public Activity mainActivity;
+    public Boolean valid;
 
-    public LazyImageLoadAdapter(Activity a, JSONObject[] products, Activity mainActivity) {
+    public LazyImageLoadAdapter(Activity a, List<JSONObject> products, Activity mainActivity) {
         activity = a;
-        this.products = new ArrayList<>(Arrays.asList(products));
+        this.products = products;
+        this.valid = isValid(products);
         this.mainActivity = mainActivity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         imageLoader = new ImageLoader(activity.getApplicationContext());
     }
 
@@ -84,7 +86,6 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         if(convertView == null) {
 
             vi = inflater.inflate(R.layout.product_row, null);
-
             holder = new ViewHolder();
             holder.name = (TextView) vi.findViewById(R.id.product_name);
             holder.image = (ImageView) vi.findViewById(R.id.product_image);
@@ -98,13 +99,12 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         }
 
         final JSONObject product = getItem(pos);
-        JSONObject productObj = null;
+        assert product != null;
         int quantity;
 
         try {
             quantity = product.getInt("quantity");
-            productObj = new JSONObject(product.getString("product"));
-            holder.name.setText(productObj.getString("name"));
+            holder.name.setText(product.getString("name"));
             holder.quantity.setText(String.valueOf(quantity));
             holder.add.setTag(pos);
             holder.sub.setTag(pos);
@@ -113,11 +113,16 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         }
         ImageView image = holder.image;
         try {
-            assert productObj != null;
-            imageLoader.displayImage(activity.getApplicationContext().getString(
-                    R.string.domain)
-                    .concat("/img/")
-                    .concat(productObj.getString("image")), image);
+            if (product.getBoolean("available")) {
+                imageLoader.displayImage(activity.getApplicationContext().getString(
+                        R.string.domain)
+                        .concat("/img/")
+                        .concat(product.getString("image")), image);
+            } else {
+                image.setImageResource(R.mipmap.not_available);
+                holder.add.setEnabled(false);
+                holder.sub.setEnabled(false);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -130,7 +135,6 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
                     int quantity = product.getInt("quantity");
                     product.put("quantity", quantity + 1);
                     holder.quantity.setText(String.valueOf(product.getInt("quantity")));
-                    System.out.println("Aumentó en 1");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -146,7 +150,6 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
                     if (quantity>1) {
                         product.put("quantity", quantity - 1);
                         holder.quantity.setText(String.valueOf(product.getInt("quantity")));
-                        System.out.println("Disminuyo en 1");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -158,19 +161,20 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity);
-                alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
-                alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                        holder.name.getText() + "?");
-                alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        mainActivity)
+                        .setTitle(mainActivity.getResources().getString(R.string.delete_title))
+                        .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                        holder.name.getText() + "?")
+                        .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         remove(pos);
                         notifyDataSetChanged();
                         dialog.dismiss();
+                        LazyImageLoadAdapter.this.valid = isValid(products);
                     }
-                });
-                alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -186,19 +190,20 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity);
-                alert.setTitle(mainActivity.getResources().getString(R.string.delete_title));
-                alert.setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                    holder.name.getText() + "?");
-                alert.setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        mainActivity)
+                        .setIcon(R.drawable.warning)
+                        .setTitle(mainActivity.getResources().getString(R.string.delete_title))
+                        .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                    holder.name.getText() + "?")
+                    .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         remove(pos);
                         notifyDataSetChanged();
                         dialog.dismiss();
+                        LazyImageLoadAdapter.this.valid = isValid(products);
                     }
-                });
-                alert.setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                }).setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -210,6 +215,21 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         });
 
             return vi;
+    }
+
+    private static Boolean isValid(List<JSONObject> products) {
+        Boolean result = true;
+        for (JSONObject p : products) {
+            try {
+                if (!p.getBoolean("available")) {
+                    result = false;
+                    break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
 }

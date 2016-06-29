@@ -58,7 +58,7 @@ public class MainMenu extends AppCompatActivity {
                         break;
                     case 2: //Settings
                         FileOutputStream outputStream;
-                        String stringProducts = "{\"products\": {\"dream\": 1}, \"barcodes\": {\"0049325377060\": 1}}";
+                        String stringProducts = "{\"products\": {\"batman\": 1}, \"barcodes\": {\"0049325377060\": 1}}";
 
                         try {
                             outputStream = openFileOutput(FILENAME, Context.MODE_PRIVATE);
