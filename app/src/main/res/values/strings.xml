@@ -113,4 +113,8 @@
     <string name="restore_cart">Restore this cart</string>
     <string name="restore_cart_subtitle">Are you sure you want to restore this cart?\\nThis will be overwrite the current cart in the phone</string>
     <string name="cart_restored">Shopping cart restored</string>
+    <string name="delete_past_cart">Delete old cart</string>
+    <string name="delete_past_cart_subtitle">Are you sure you want to delete an old cart?\n This can not be undone</string>
+    <string name="delete_past_cart_loading" >Deleting cart…</string>
+    <string name="past_cart_delete_ok" >Cart successfully deleted</string>
 </resources>

@@ -56,4 +56,8 @@
     <string name="restore_cart">Restaurar este carrito</string>
     <string name="restore_cart_subtitle">¿Estás seguro de que deseas restaurar este carrito?\nEsto sobreescribirá el carrito que haya en el teléfono</string>
     <string name="cart_restored">Carrito restaurado</string>
+    <string name="delete_past_cart">Eliminar carrito antiguo</string>
+    <string name="delete_past_cart_subtitle">¿Estás seguro de que deseas eliminar un carrito antiguo?\n Esta operación no se puede deshacer</string>
+    <string name="delete_past_cart_loading" >Eliminando carrito…</string>
+    <string name="past_cart_delete_ok" >Carrito eliminado correctamente</string>
 </resources>

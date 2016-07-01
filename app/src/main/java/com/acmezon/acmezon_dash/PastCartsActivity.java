@@ -1,14 +1,17 @@
 package com.acmezon.acmezon_dash;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,7 @@ import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +39,10 @@ public class PastCartsActivity extends ListActivity {
     private final DateFormat format = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.ENGLISH);
     private List<Date> pastCarts;
     private ProgressDialog loadingDialog;
+    private ProgressDialog deleteDialog;
     private final String ACTION_CLOSE = "com.acmezon.acmezon_dash.ACTION_CLOSE";
+    DeviceConnector connection;
+    private Date toDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,16 @@ public class PastCartsActivity extends ListActivity {
 
         setListAdapter(cartsAdapter);
 
-        DeviceConnector connection = ((Application) getApplication()).getConnection();
+        this.getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                deletePastCart(position);
+
+                return true;
+            }
+        });
+
+        connection = ((Application) getApplication()).getConnection();
         BluetoothResponseHandler bluetoothHandler = new BluetoothResponseHandler() {
             @Override
             public void onDeviceName(String deviceName) {
@@ -62,55 +78,74 @@ public class PastCartsActivity extends ListActivity {
 
             @Override
             public void onMessageRead(int bytes, String data) {
-                try {
-                    JSONObject cartsJSON = new JSONObject(data);
-                    String carts = cartsJSON.getString("carts");
-                    if(!carts.equals("")) {
-                        String[] cartsDates = carts.split(";");
-                        for (String cartsDate : cartsDates) {
-                            try {
-                                pastCarts.add(format.parse(cartsDate));
-                            } catch (ParseException e) {
-                                Log.d("PASTCARTS", e.getMessage());
+                switch (data.trim()) {
+                    case "delete ok":
+                        pastCarts.remove(toDelete);
+                        toDelete = null;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(PastCartsActivity.this,
+                                        getString(R.string.past_cart_delete_ok),
+                                        Toast.LENGTH_LONG).show();
+                                cartsAdapter.notifyDataSetChanged();
+                                deleteDialog.dismiss();
+                            }
+                        });
+                        break;
+                    default:
+                        try {
+                            JSONObject cartsJSON = new JSONObject(data);
+                            String carts = cartsJSON.getString("carts");
+                            if (!carts.equals("")) {
+                                String[] cartsDates = carts.split(";");
+                                for (String cartsDate : cartsDates) {
+                                    try {
+                                        pastCarts.add(format.parse(cartsDate));
+                                    } catch (ParseException e) {
+                                        Log.d("PASTCARTS", e.getMessage());
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(PastCartsActivity.this,
+                                                        getString(R.string.past_cart_parse_error),
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                }
+
+                                Collections.sort(pastCarts, Collections.<Date>reverseOrder());
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(PastCartsActivity.this,
-                                                getString(R.string.past_cart_parse_error),
-                                                Toast.LENGTH_LONG).show();
+                                        cartsAdapter.notifyDataSetChanged();
+                                        loadingDialog.dismiss();
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadingDialog.dismiss();
+                                        pastCartsEmpty.setVisibility(View.VISIBLE);
                                     }
                                 });
                             }
+                        } catch (JSONException e) {
+                            Log.d("PASTCARTS", e.getMessage());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(PastCartsActivity.this,
+                                            getString(R.string.past_cart_error),
+                                            Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+                            });
                         }
-
-                        Collections.sort(pastCarts, Collections.<Date>reverseOrder());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                cartsAdapter.notifyDataSetChanged();
-                                loadingDialog.dismiss();
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadingDialog.dismiss();
-                                pastCartsEmpty.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-                }catch (JSONException e) {
-                    Log.d("PASTCARTS", e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(PastCartsActivity.this,
-                                    getString(R.string.past_cart_error),
-                                    Toast.LENGTH_LONG).show();
-                            finish();
-                        }
-                    });
+                        break;
                 }
             }
 
@@ -143,6 +178,34 @@ public class PastCartsActivity extends ListActivity {
         });
 
         connection.write(Commands.GET_OLD_CARTS.getBytes());
+    }
+
+    private void deletePastCart(final int position) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(
+                this);
+        alert.setTitle(getString(R.string.delete_past_cart));
+        alert.setMessage(getString(R.string.delete_past_cart_subtitle));
+        alert.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                toDelete = (Date) PastCartsActivity.this.getListView().getItemAtPosition(position);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteDialog = ProgressDialog.show(PastCartsActivity.this, "",
+                                getResources().getString(R.string.delete_past_cart_loading), true);
+                    }
+                });
+                connection.write(String.format("[delete %s]", format.format(toDelete)).getBytes());
+            }
+        });
+        alert.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 
     @Override
