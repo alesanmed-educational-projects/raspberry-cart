@@ -32,7 +32,7 @@ public class DateListAdapter extends ArrayAdapter<Date>{
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.shopping_cart_row, null);
+            v = vi.inflate(R.layout.shopping_cart_row, parent, false);
         }
 
         Date cart = getItem(position);

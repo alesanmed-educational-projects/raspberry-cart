@@ -33,7 +33,7 @@
     <string name="swipe_please">Device list not updated.\nPlease swipe down the screen to scan the devices around you.</string>
     <string name="domain">http://acmezon.ddns.net:8080</string>
     <string name="get_cart">Get last cart</string>
-    <string name="no_products">No valid products in the cart</string>
+    <string name="no_products">Can\'t connect to Acme-Supermarket or there are no valid products in the cart.</string>
     <string name="pay">Send to system</string>
     <string name="delete_cart">Delete cart</string>
     <string name="delete_cart_dialog_title">Delete cart</string>

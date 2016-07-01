@@ -1,11 +1,9 @@
 package com.acmezon.acmezon_dash.image_url;
 
-import org.json.JSONArray;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +15,10 @@ import android.widget.TextView;
 import com.acmezon.acmezon_dash.CartPreviewActivity;
 import com.acmezon.acmezon_dash.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
@@ -87,7 +84,7 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
 
         if(convertView == null) {
 
-            vi = inflater.inflate(R.layout.product_row, null);
+            vi = inflater.inflate(R.layout.product_row, parent, false);
 
             holder = new ViewHolder();
             holder.name = (TextView) vi.findViewById(R.id.product_name);
@@ -221,35 +218,35 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             });
 
 
-        holder.image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity)
-                        .setIcon(R.drawable.warning)
-                        .setTitle(mainActivity.getResources().getString(R.string.delete_title))
-                        .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                    holder.name.getText() + "?")
-                    .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        remove(pos);
-                        notifyDataSetChanged();
-                        dialog.dismiss();
-                        LazyImageLoadAdapter.this.valid = isValid(products);
-                    }
-                }).setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-                return false;
-            }
-        });
-
-            return vi;
+            holder.image.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(
+                            mainActivity)
+                            .setIcon(R.drawable.warning)
+                            .setTitle(mainActivity.getResources().getString(R.string.delete_title))
+                            .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                                    holder.name.getText() + "?")
+                            .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    remove(pos);
+                                    notifyDataSetChanged();
+                                    dialog.dismiss();
+                                    LazyImageLoadAdapter.this.valid = isValid(products);
+                                }
+                            }).setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alert.show();
+                    return false;
+                }
+            });
+        }
+        return vi;
     }
 
     private static Boolean isValid(List<JSONObject> products) {

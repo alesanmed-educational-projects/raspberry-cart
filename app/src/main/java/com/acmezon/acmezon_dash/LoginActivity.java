@@ -18,6 +18,7 @@ import com.securepreferences.SecurePreferences;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -29,7 +30,6 @@ import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.ClientProtocolException;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -76,8 +76,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (!email.isEmpty() && !password.isEmpty() && isEmail &&
                         password.length() >= 8 && password.length() <= 32) {
-                    email_view.setBackgroundDrawable(oldBackground);
-                    password_view.setBackgroundDrawable(oldBackground);
+                    if (android.os.Build.VERSION.SDK_INT > 15) {
+                        email_view.setBackground(oldBackground);
+                        password_view.setBackground(oldBackground);
+                    } else {
+                        //noinspection deprecation
+                        email_view.setBackgroundDrawable(oldBackground);
+                        //noinspection deprecation
+                        password_view.setBackgroundDrawable(oldBackground);
+                    }
                     launch_post_query(email, password, products_json);
                 } else {
                     Toast.makeText(getApplicationContext(),
@@ -118,7 +125,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private class LoginAndSubmitCartTask extends AsyncTask<String, Void, Boolean> {
-        private Boolean success;
         private String message;
 
         @Override
@@ -136,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
 
             try {
                 //add data
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                List<NameValuePair> nameValuePairs = new ArrayList<>(1);
                 nameValuePairs.add(new BasicNameValuePair("email", email));
                 nameValuePairs.add(new BasicNameValuePair("password", MD5(password)));
                 nameValuePairs.add(new BasicNameValuePair("products", products));
@@ -158,13 +164,21 @@ public class LoginActivity extends AppCompatActivity {
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
-            this.success = result;
             return result;
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
             if (success) {
+                File dir = getFilesDir();
+                String FILENAME = "shopping_cart";
+                File shoppingCartFile = new File(dir, FILENAME);
+                boolean deleted = shoppingCartFile.delete();
+                if(!deleted) {
+                    Toast.makeText(getApplicationContext(),
+                            R.string.delete_cart_error,
+                            Toast.LENGTH_LONG).show();
+                }
                 finish();
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.submit_success),
@@ -172,17 +186,22 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 Log.d("SUBMIT", message);
                 String message_toast;
-                if (message=="Internal Server Error") {
-                    message_toast = getString(R.string.error_server);
-                    finish();
-                } else if (message=="Some product not available") {
-                    message_toast = getString(R.string.error_not_available_product);
-                    finish();
-                } else if (message=="Authentication failed") {
-                    message_toast = getString(R.string.error_authentication);
-                } else {
-                    message_toast = getString(R.string.error_server);
-                    finish();
+                switch (message) {
+                    case "Internal Server Error":
+                        message_toast = getString(R.string.error_server);
+                        finish();
+                        break;
+                    case "Some product not available":
+                        message_toast = getString(R.string.error_not_available_product);
+                        finish();
+                        break;
+                    case "Authentication failed":
+                        message_toast = getString(R.string.error_authentication);
+                        break;
+                    default:
+                        message_toast = getString(R.string.error_server);
+                        finish();
+                        break;
                 }
                 Toast.makeText(getApplicationContext(),
                         message_toast,

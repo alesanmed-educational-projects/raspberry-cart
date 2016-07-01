@@ -250,7 +250,9 @@ public class ShoppingCart extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                loadingDialog.dismiss();
+                if (loadingDialog != null) {
+                    loadingDialog.dismiss();
+                }
             }
         });
     }
@@ -317,6 +319,8 @@ public class ShoppingCart extends Activity {
 
                     cartReceived = true;
                 } else {
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.no_products),
                             Toast.LENGTH_LONG).show();

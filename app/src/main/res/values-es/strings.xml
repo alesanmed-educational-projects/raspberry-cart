@@ -34,7 +34,7 @@
     <string name="swipe_please">Lista de dispositivos no actualizados.\nPor favor arrastra hacia abajo para escanear nuevos dispositivos a su alrededor.</string>
     <string name="domain">http://acmezon.ddns.net:8080</string>
     <string name="get_cart">Obtener carrito</string>
-    <string name="no_products">No hay productos válidos en el carrito</string>
+    <string name="no_products">No se puede conectar con Acme-Supermarket o no hay productos válidos en el carrito</string>
     <string name="pay">Enviar al sistema</string>
     <string name="delete_cart">Borrar carrito</string>
     <string name="delete_cart_dialog_title">Eliminar carrito</string>

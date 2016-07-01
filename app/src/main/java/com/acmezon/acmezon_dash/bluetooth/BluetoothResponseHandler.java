@@ -1,13 +1,7 @@
 package com.acmezon.acmezon_dash.bluetooth;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-
-import com.acmezon.acmezon_dash.bluetooth.Connecting.DeviceConnector;
-
-import java.lang.ref.WeakReference;
 
 /*
  * Created by alesanmed on 20/06/2016.

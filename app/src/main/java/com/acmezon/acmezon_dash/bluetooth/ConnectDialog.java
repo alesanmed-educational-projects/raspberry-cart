@@ -1,5 +1,6 @@
 package com.acmezon.acmezon_dash.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -57,7 +58,9 @@ public class ConnectDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        @SuppressLint("InflateParams")
         View view = getActivity().getLayoutInflater().inflate(R.layout.connect_dialog, null);
+
         dName = getArguments().getString("name");
         dMac = getArguments().getString("mac");
 

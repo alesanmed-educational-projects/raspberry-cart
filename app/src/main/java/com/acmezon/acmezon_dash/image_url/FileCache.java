@@ -2,6 +2,7 @@ package com.acmezon.acmezon_dash.image_url;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
@@ -18,7 +19,10 @@ public class FileCache {
         }
 
         if(!cacheDir.exists()) {
-            cacheDir.mkdirs();
+            boolean created = cacheDir.mkdirs();
+            if(!created) {
+                Log.d("ACMEZON", "File not created");
+            }
         }
     }
 
@@ -26,8 +30,7 @@ public class FileCache {
 
         String filename = String.valueOf(url.hashCode());
 
-        File f = new File(cacheDir, filename);
-        return f;
+        return new File(cacheDir, filename);
     }
 
     public void clear() {
@@ -37,7 +40,11 @@ public class FileCache {
         }
 
         for(File f : files) {
-            f.delete();
+            boolean deleted = f.delete();
+
+            if(!deleted) {
+                Log.d("ACMEZON", "File couldn\'t be deleted");
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +25,7 @@ import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class CartPreviewActivity extends AppCompatActivity {
     private DeviceConnector connection;
@@ -160,13 +160,13 @@ public class CartPreviewActivity extends AppCompatActivity {
     }
 
     private void receiveProducts(final String productsReceived) {
-        final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, productsReceived);
+        final List<JSONObject> finalProducts = ProductUtils.receiveProducts(this, productsReceived);
         this.stringProducts = null;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (finalProducts != null && finalProducts.length > 0) {
+                if (finalProducts != null && finalProducts.size() > 0) {
                     list = (ListView) findViewById(R.id.products_list);
                     assert list != null;
                     adapter = new LazyImageLoadAdapter(CartPreviewActivity.this,

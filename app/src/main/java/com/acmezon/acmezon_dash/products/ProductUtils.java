@@ -26,9 +26,16 @@ public class ProductUtils {
             try {
                 aux_product = httpProductQuery(context.getString(R.string.domain).concat(
                         String.format("/api/product/barcode/%s", p.getString("barcode"))), p.getInt("quantity"));
-                res.add(aux_product);
+
+                if(aux_product == null) {
+                    res = new ArrayList<>();
+                    break;
+                } else {
+                    res.add(aux_product);
+                }
             } catch (JSONException e) {
-                e.printStackTrace();
+                res = new ArrayList<>();
+                break;
             }
         }
 
@@ -36,9 +43,17 @@ public class ProductUtils {
             try {
                 aux_product = httpProductQuery(context.getString(R.string.domain).concat(
                         String.format("/api/product/text/search/%s", p.getString("name"))), p.getInt("quantity"));
-                res.add(aux_product);
+
+                Log.d("SHOPPINGCART", "Null: " + (aux_product == null));
+                if(aux_product == null) {
+                    res = new ArrayList<>();
+                    break;
+                } else {
+                    res.add(aux_product);
+                }
             } catch (JSONException e) {
-                e.printStackTrace();
+                res = new ArrayList<>();
+                break;
             }
         }
         return res;
@@ -49,9 +64,8 @@ public class ProductUtils {
         URL url = null;
         try {
             url = new URL(urlString);
-            System.out.println(url.toString());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Log.d("SHOPPINGCART", e.getMessage());
         }
 
         HttpURLConnection connection;
@@ -75,7 +89,7 @@ public class ProductUtils {
                     responseStrBuilder.append(inputStr);
                 JSONObject obj = new JSONObject(responseStrBuilder.toString());
                 JSONObject product = obj.getJSONObject("product");
-                if(!obj.get("product").equals(null)) {
+                if(obj.get("product") != null) {
                     result.put("_id", product.getInt("_id"));
                     result.put("quantity", quantity);
                     result.put("name", product.getString("name"));
@@ -83,13 +97,14 @@ public class ProductUtils {
                     result.put("available", obj.getBoolean("available"));
                 }
             } else {
-                //TODO: Completar o eliminar el else
+                Log.d("SHOPPINGCART", "Response: "+response);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d("SHOPPINGCART", e.getMessage());
             return null;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("SHOPPINGCART", e.getMessage());
+            return null;
         }
 
         return result;

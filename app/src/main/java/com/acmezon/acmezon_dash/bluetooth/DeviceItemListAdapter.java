@@ -27,7 +27,7 @@ public class DeviceItemListAdapter extends ArrayAdapter<DeviceItem>{
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.device_list_layout, null);
+            v = vi.inflate(R.layout.device_list_layout, parent, false);
         }
 
         DeviceItem device = getItem(position);

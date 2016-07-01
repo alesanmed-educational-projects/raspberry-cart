@@ -127,15 +127,6 @@ public class DeviceConnector {
     // ==========================================================================
 
 
-    /**
-     * Получение состояния устройства
-     */
-    public synchronized int getState() {
-        return mState;
-    }
-    // ==========================================================================
-
-
     public synchronized void connected(BluetoothSocket socket) {
         if (D) Log.d(TAG, "connected");
 

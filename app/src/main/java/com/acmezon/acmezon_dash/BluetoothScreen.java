@@ -55,7 +55,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                 Log.d("DEVICELIST", "Bluetooth device found\n");
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Create a new device item
-                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress(), "false");
+                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress());
                 // Add it to our adapter
                 deviceItemList.add(newDevice);
                 mAdapter.notifyDataSetChanged();
@@ -251,7 +251,7 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
         mAdapter.clear();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                DeviceItem newDevice= new DeviceItem(device.getName(),device.getAddress(),"false");
+                DeviceItem newDevice= new DeviceItem(device.getName(),device.getAddress());
                 Log.d("DEVICELIST", "DEVICE:" + newDevice.getDeviceName() + "\n");
                 deviceItemList.add(newDevice);
                 mAdapter.notifyDataSetChanged();

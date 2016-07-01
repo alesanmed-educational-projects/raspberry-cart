@@ -10,7 +10,6 @@ import com.acmezon.acmezon_dash.R;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,7 +118,7 @@ public class ImageLoader {
 
         try {
 
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             URL imageUrl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
             conn.setConnectTimeout(30000);
@@ -180,8 +179,6 @@ public class ImageLoader {
             Bitmap bitmap = BitmapFactory.decodeStream(stream2, null, o2);
             stream2.close();
             return bitmap;
-        } catch(FileNotFoundException e) {
-            e.printStackTrace();
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -193,9 +190,7 @@ public class ImageLoader {
 
         String tag = imageViews.get(ptl.imageView);
 
-        if(tag == null || !tag.equals(ptl.url))
-            return true;
-        return false;
+        return tag == null || !tag.equals(ptl.url);
     }
 
     class BitmapDisplayer implements Runnable {
@@ -218,10 +213,5 @@ public class ImageLoader {
                 photoToLoad.imageView.setImageResource(stub_int);
             }
         }
-    }
-
-    public void clearCache() {
-        memoryCache.clear();
-        fileCache.clear();
     }
 }
