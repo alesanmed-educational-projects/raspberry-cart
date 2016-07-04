@@ -62,4 +62,6 @@
     <string name="past_cart_delete_ok" >Carrito eliminado correctamente</string>
     <string name="store_account">Cuenta</string>
     <string name="store_account_desc">Almacenar datos de la cuenta</string>
+    <string name="account_saved">Datos de la cuenta guardados</string>
+    <string name="show_account_desc">Mostrar datos de la cuenta</string>
 </resources>

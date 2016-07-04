@@ -119,4 +119,6 @@
     <string name="past_cart_delete_ok" >Cart successfully deleted</string>
     <string name="store_account">Account</string>
     <string name="store_account_desc">Store account data</string>
+    <string name="account_saved">Account data saved</string>
+    <string name="show_account_desc">Show account data</string>
 </resources>

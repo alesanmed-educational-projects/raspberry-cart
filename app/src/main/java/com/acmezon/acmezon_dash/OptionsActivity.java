@@ -4,13 +4,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.securepreferences.SecurePreferences;
+
 import java.io.FileOutputStream;
+import java.util.Map;
 
 public class OptionsActivity extends AppCompatActivity {
     private final String FILENAME = "shopping_cart";
@@ -74,7 +79,38 @@ public class OptionsActivity extends AppCompatActivity {
         storeAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SharedPreferences prefs = new SecurePreferences(getApplicationContext());
 
+                SharedPreferences.Editor preferencesEditor = prefs.edit();
+                preferencesEditor.clear();
+
+                preferencesEditor.putString("user", "alesanmed");
+                preferencesEditor.putString("pass", "password");
+                boolean commited = preferencesEditor.commit();
+
+                Toast.makeText(getApplicationContext(),
+                        String.format("%s: %b", R.string.account_saved, commited),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+
+        LinearLayout showAccount = (LinearLayout) findViewById(R.id.show_account);
+        assert showAccount != null;
+
+        showAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences prefs = new SecurePreferences(getApplicationContext());
+
+                Map<String, ?> data = prefs.getAll();
+                String toShow = "";
+                Log.d("OPTIONSKEYS", "user");
+                Log.d("OPTIONSKEYS", SecurePreferences.hashPrefKey("user"));
+                Log.d("OPTIONSKEYS", "pass");
+                Log.d("OPTIONSKEYS", SecurePreferences.hashPrefKey("pass"));
+                for (Object s: data.values()) {
+                    Log.d("OPTIONSKEYS", "" + s);
+                }
             }
         });
     }
