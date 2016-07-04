@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.acmezon.acmezon_dash"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
 
@@ -28,11 +28,12 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.google.android.gms:play-services-appindexing:9.0.2'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.0'
     compile 'com.scottyab:secure-preferences-lib:0.1.4'
     compile 'com.github.goka.blurredgridmenu:blurredgridmenu:1.0.2'
     compile 'com.dev.sacot41:scviewpager:0.0.4'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:support-v4:24.0.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
+    compile 'com.scottyab:secure-preferences-lib:0.1.4'
 }
