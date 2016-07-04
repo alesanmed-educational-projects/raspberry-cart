@@ -63,6 +63,8 @@ public class MainMenu extends AppCompatActivity {
                         startActivity(activityAboutUs);
                         break;
                     case 4: //Help
+                        Intent activityHelp = new Intent(MainMenu.this, HelpActivity.class);
+                        startActivity(activityHelp);
                         break;
                     case 5: //Exit
                         android.os.Process.killProcess(android.os.Process.myPid());

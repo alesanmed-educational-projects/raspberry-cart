@@ -42,7 +42,8 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".OptionsActivity" />
         <activity android:name=".PastCartsActivity" />
-        <activity android:name=".CartPreviewActivity"></activity>
+        <activity android:name=".CartPreviewActivity" />
+        <activity android:name=".HelpActivity"></activity>
     </application>
 
 </manifest>

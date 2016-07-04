@@ -16,7 +16,7 @@
     <string name="login_submit">Guardar en carrito</string>
     <string name="login_cancel">Cancelar</string>
     <string name="error_bad_params">Error: Formulario incorrecto.</string>
-    <string name="error_authentication">Error: Autenticación exitosa.</string>
+    <string name="error_authentication">Error: Autenticación fallida.</string>
     <string name="error_server">Error: Error interno del sistema.</string>
     <string name="connect_dash">Conectar</string>
     <string name="get_last_cart">Carrito</string>
@@ -60,8 +60,17 @@
     <string name="delete_past_cart_subtitle">¿Estás seguro de que deseas eliminar un carrito antiguo?\n Esta operación no se puede deshacer</string>
     <string name="delete_past_cart_loading" >Eliminando carrito…</string>
     <string name="past_cart_delete_ok" >Carrito eliminado correctamente</string>
-    <string name="store_account">Cuenta</string>
-    <string name="store_account_desc">Almacenar datos de la cuenta</string>
-    <string name="account_saved">Datos de la cuenta guardados</string>
-    <string name="show_account_desc">Mostrar datos de la cuenta</string>
+    <string name="remove_account">Cuenta</string>
+    <string name="remove_account_desc">Desvincular cuenta</string>
+    <string name="account_removed">Cuenta desvinculada</string>
+    <string name="account_removed_false">No se ha podido desvincular la cuenta</string>
+    <string name="remember_me">Recuérdame</string>
+    <string name="sending_cart_loading">Enviando el carrito…</string>
+    <string name="remove_account_subtitle">¿Está seguro de que desea desvincular su cuenta?</string>
+    <string name="removing_account">Descinvulando la cuenta…</string>
+    <string name="help_title">Ayuda</string>
+    <string name="help_desc">Si necesita ayuda, puede contactar en la siguiente direccion de correo:</string>
+    <string name="corporate_mail">example@acmezon.com</string>
+    <string name="visit_us">Por favor, visítanos en el siguiente enlace:</string>
+    <string name="site_link">http://acmezon.ddns.net:8080</string>
 </resources>

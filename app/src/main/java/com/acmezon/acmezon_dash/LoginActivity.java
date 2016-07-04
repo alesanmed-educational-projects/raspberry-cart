@@ -1,5 +1,6 @@
 package com.acmezon.acmezon_dash;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,74 +45,83 @@ public class LoginActivity extends AppCompatActivity {
     EditText email_view,password_view;
     SharedPreferences shared;
     String products_json;
+    ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
-        submit_btn=(Button)findViewById(R.id.submit_btn);
-        cancel_btn=(Button)findViewById(R.id.cancel_btn);
-        email_view=(EditText)findViewById(R.id.input_email);
-        password_view=(EditText)findViewById(R.id.input_password);
+        loading = ProgressDialog.show(LoginActivity.this, "",
+                getResources().getString(R.string.sending_cart_loading), true);
+
+        loading.show();
 
         Bundle b = getIntent().getExtras();
         products_json = b.getString("shopping_cart");
 
-        final String color_error = "#ff4444";
-
-        final Drawable oldBackground = email_view.getBackground();
-
         shared = new SecurePreferences(this);
         List<String> credentials = retrieveCredentials();
         if (credentials.size()>0)  {
-            email_view.setText(credentials.get(0));
-            password_view.setText(credentials.get(1));
-        }
+            launch_post_query(credentials.get(0), credentials.get(1), products_json, false);
+        } else {
+            loading.dismiss();
+            setContentView(R.layout.activity_login);
+            submit_btn = (Button) findViewById(R.id.submit_btn);
+            cancel_btn = (Button) findViewById(R.id.cancel_btn);
+            email_view = (EditText) findViewById(R.id.input_email);
+            password_view = (EditText) findViewById(R.id.input_password);
 
-        submit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = email_view.getText().toString();
-                String password = password_view.getText().toString();
-                boolean isEmail = isEmail(email);
+            final String color_error = "#ff4444";
 
-                if (!email.isEmpty() && !password.isEmpty() && isEmail &&
-                        password.length() >= 8 && password.length() <= 32) {
-                    if (android.os.Build.VERSION.SDK_INT > 15) {
-                        email_view.setBackground(oldBackground);
-                        password_view.setBackground(oldBackground);
+            final Drawable oldBackground = email_view.getBackground();
+            final CheckBox rememberMe = (CheckBox) findViewById(R.id.remember_me);
+            submit_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loading.show();
+                    String email = email_view.getText().toString();
+                    String password = password_view.getText().toString();
+                    boolean isEmail = isEmail(email);
+
+                    if (!email.isEmpty() && !password.isEmpty() && isEmail &&
+                            password.length() >= 8 && password.length() <= 32) {
+                        if (android.os.Build.VERSION.SDK_INT > 15) {
+                            email_view.setBackground(oldBackground);
+                            password_view.setBackground(oldBackground);
+                        } else {
+                            //noinspection deprecation
+                            email_view.setBackgroundDrawable(oldBackground);
+                            //noinspection deprecation
+                            password_view.setBackgroundDrawable(oldBackground);
+                        }
+                        launch_post_query(email, password, products_json, rememberMe.isChecked());
                     } else {
-                        //noinspection deprecation
-                        email_view.setBackgroundDrawable(oldBackground);
-                        //noinspection deprecation
-                        password_view.setBackgroundDrawable(oldBackground);
-                    }
-                    launch_post_query(email, password, products_json);
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            getApplicationContext().getResources().getString(R.string.error_bad_params),
-                            Toast.LENGTH_LONG).show();
-                    if (email.isEmpty() || !isEmail) {
-                        email_view.setBackgroundColor(Color.parseColor(color_error));
-                    }
-                    if (password.isEmpty() || password.length() < 8 || password.length() > 32) {
-                        password_view.setBackgroundColor(Color.parseColor(color_error));
+                        Toast.makeText(getApplicationContext(),
+                                getApplicationContext().getResources().getString(R.string.error_bad_params),
+                                Toast.LENGTH_LONG).show();
+                        if (email.isEmpty() || !isEmail) {
+                            email_view.setBackgroundColor(Color.parseColor(color_error));
+                        }
+                        if (password.isEmpty() || password.length() < 8 || password.length() > 32) {
+                            password_view.setBackgroundColor(Color.parseColor(color_error));
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        cancel_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+            cancel_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
     }
 
-    public boolean launch_post_query(String email, String password, String products) {
-        storeCredentials(email, MD5(password));
+    public boolean launch_post_query(String email, String password, String products, boolean rememberMe) {
+        if(rememberMe) {
+            storeCredentials(email, password);
+        }
         new LoginAndSubmitCartTask().execute(email, password, products);
         return true;
     }
@@ -179,12 +191,14 @@ public class LoginActivity extends AppCompatActivity {
                             R.string.delete_cart_error,
                             Toast.LENGTH_LONG).show();
                 }
+                loading.dismiss();
                 finish();
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.submit_success),
                         Toast.LENGTH_LONG).show();
             } else {
                 Log.d("SUBMIT", message);
+                loading.dismiss();
                 String message_toast;
                 switch (message) {
                     case "Internal Server Error":
@@ -215,16 +229,17 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = shared.edit();
         editor.putString("EMAIL", email);
         editor.putString("PASSWORD", password);
-        editor.clear();
         editor.apply();
     }
 
     private List<String> retrieveCredentials() {
         List<String> r = new ArrayList<>();
         try {
-            r.add(shared.getString("EMAIL", null));
-            r.add(shared.getString("PASSWORD", null));
+            Map<String, ?> data = shared.getAll();
+            r.add(data.get(SecurePreferences.hashPrefKey("EMAIL")).toString());
+            r.add(data.get(SecurePreferences.hashPrefKey("PASSWORD")).toString());
         } catch (Exception ignored) {
+            Log.d("SECUREPREFERENCES", ignored.getMessage());
         }
         return r;
     }

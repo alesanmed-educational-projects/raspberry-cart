@@ -115,10 +115,19 @@
     <string name="cart_restored">Shopping cart restored</string>
     <string name="delete_past_cart">Delete old cart</string>
     <string name="delete_past_cart_subtitle">Are you sure you want to delete an old cart?\n This can not be undone</string>
-    <string name="delete_past_cart_loading" >Deleting cart…</string>
-    <string name="past_cart_delete_ok" >Cart successfully deleted</string>
-    <string name="store_account">Account</string>
-    <string name="store_account_desc">Store account data</string>
-    <string name="account_saved">Account data saved</string>
-    <string name="show_account_desc">Show account data</string>
+    <string name="delete_past_cart_loading">Deleting cart…</string>
+    <string name="past_cart_delete_ok">Cart successfully deleted</string>
+    <string name="remove_account">Account</string>
+    <string name="remove_account_desc">Unlink account</string>
+    <string name="account_removed">Account unlinked</string>
+    <string name="account_removed_false">The account could not be unlinked</string>
+    <string name="remember_me">Remember me</string>
+    <string name="sending_cart_loading">Sending cart…</string>
+    <string name="remove_account_subtitle">Are you sure you want to unlink your account?</string>
+    <string name="removing_account">Unlinking account…</string>
+    <string name="help_title">Help</string>
+    <string name="help_desc">If you need any help, you can contact us in the following email address:</string>
+    <string name="corporate_mail">example@acmezon.com</string>
+    <string name="visit_us">Please, visit us in the following link:</string>
+    <string name="site_link">http://acmezon.ddns.net:8080</string>
 </resources>

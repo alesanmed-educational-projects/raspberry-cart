@@ -1,7 +1,10 @@
 package com.acmezon.acmezon_dash;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -79,38 +82,51 @@ public class OptionsActivity extends AppCompatActivity {
         storeAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences prefs = new SecurePreferences(getApplicationContext());
+                AlertDialog.Builder alert = new AlertDialog.Builder(OptionsActivity.this);
+                alert.setTitle(getString(R.string.remove_account));
+                alert.setMessage(getString(R.string.remove_account_subtitle));
+                alert.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final ProgressDialog loading = ProgressDialog.show(OptionsActivity.this, "",
+                                getResources().getString(R.string.removing_account), true);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.show();
+                            }
+                        });
+                        SharedPreferences prefs = new SecurePreferences(getApplicationContext());
 
-                SharedPreferences.Editor preferencesEditor = prefs.edit();
-                preferencesEditor.clear();
+                        SharedPreferences.Editor preferencesEditor = prefs.edit();
+                        preferencesEditor.remove("EMAIL");
+                        preferencesEditor.remove("PASSWORD");
+                        boolean committed = preferencesEditor.commit();
 
-                preferencesEditor.putString("user", "alesanmed");
-                preferencesEditor.putString("pass", "password");
-                boolean commited = preferencesEditor.commit();
-
-                Toast.makeText(getApplicationContext(),
-                        String.format("%s: %b", R.string.account_saved, commited),
-                        Toast.LENGTH_LONG).show();
-            }
-        });
-
-        LinearLayout showAccount = (LinearLayout) findViewById(R.id.show_account);
-        assert showAccount != null;
-
-        showAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferences prefs = new SecurePreferences(getApplicationContext());
-
-                Map<String, ?> data = prefs.getAll();
-                String toShow = "";
-                Log.d("OPTIONSKEYS", "user");
-                Log.d("OPTIONSKEYS", SecurePreferences.hashPrefKey("user"));
-                Log.d("OPTIONSKEYS", "pass");
-                Log.d("OPTIONSKEYS", SecurePreferences.hashPrefKey("pass"));
-                for (Object s: data.values()) {
-                    Log.d("OPTIONSKEYS", "" + s);
-                }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.dismiss();
+                            }
+                        });
+                        if(committed) {
+                            Toast.makeText(getApplicationContext(),
+                                    String.format("%s", getString(R.string.account_removed)),
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    String.format("%s", getString(R.string.account_removed_false)),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                alert.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
             }
         });
     }
