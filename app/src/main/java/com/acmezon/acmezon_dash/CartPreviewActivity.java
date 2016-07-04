@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class CartPreviewActivity extends AppCompatActivity {
     private DeviceConnector connection;
@@ -160,13 +161,13 @@ public class CartPreviewActivity extends AppCompatActivity {
     }
 
     private void receiveProducts(final String productsReceived) {
-        final JSONObject[] finalProducts = ProductUtils.receiveProducts(this, productsReceived);
+        final List<JSONObject> finalProducts = ProductUtils.receiveProducts(this, productsReceived);
         this.stringProducts = null;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (finalProducts != null && finalProducts.length > 0) {
+                if (finalProducts != null && !finalProducts.isEmpty()) {
                     list = (ListView) findViewById(R.id.products_list);
                     assert list != null;
                     adapter = new LazyImageLoadAdapter(CartPreviewActivity.this,

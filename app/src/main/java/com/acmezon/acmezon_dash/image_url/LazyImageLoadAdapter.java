@@ -60,6 +60,21 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
         return new JSONArray(products);
     }
 
+    private static Boolean isValid(List<JSONObject> products) {
+        Boolean result = true;
+        for (JSONObject p : products) {
+            try {
+                if (!p.getBoolean("available")) {
+                    result = false;
+                    break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     @Override
     public int getCount() {
         return products.size();
@@ -192,6 +207,7 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
                 return false;
             }
         });
+
         if(!activity.getClass().equals(CartPreviewActivity.class)) {
             holder.name.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -221,50 +237,36 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
             });
 
 
-        holder.image.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(
-                        mainActivity)
-                        .setIcon(R.drawable.warning)
-                        .setTitle(mainActivity.getResources().getString(R.string.delete_title))
-                        .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
-                    holder.name.getText() + "?")
-                    .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        remove(pos);
-                        notifyDataSetChanged();
-                        dialog.dismiss();
-                        LazyImageLoadAdapter.this.valid = isValid(products);
-                    }
-                }).setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-                return false;
-            }
-        });
+            holder.image.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(
+                            mainActivity)
+                            .setIcon(R.drawable.warning)
+                            .setTitle(mainActivity.getResources().getString(R.string.delete_title))
+                            .setMessage(mainActivity.getResources().getString(R.string.delete_subtitle) + " " +
+                                    holder.name.getText() + "?")
+                            .setPositiveButton(mainActivity.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    remove(pos);
+                                    notifyDataSetChanged();
+                                    dialog.dismiss();
+                                    LazyImageLoadAdapter.this.valid = isValid(products);
+                                }
+                            }).setNegativeButton(mainActivity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alert.show();
+                    return false;
+                }
+            });
+        }
 
             return vi;
-    }
-
-    private static Boolean isValid(List<JSONObject> products) {
-        Boolean result = true;
-        for (JSONObject p : products) {
-            try {
-                if (!p.getBoolean("available")) {
-                    result = false;
-                    break;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
     }
 
 }
