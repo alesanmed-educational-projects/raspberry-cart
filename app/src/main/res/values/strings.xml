@@ -117,4 +117,6 @@
     <string name="delete_past_cart_subtitle">Are you sure you want to delete an old cart?\n This can not be undone</string>
     <string name="delete_past_cart_loading" >Deleting cart…</string>
     <string name="past_cart_delete_ok" >Cart successfully deleted</string>
+    <string name="store_account">Account</string>
+    <string name="store_account_desc">Store account data</string>
 </resources>

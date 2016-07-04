@@ -67,6 +67,16 @@ public class OptionsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        LinearLayout storeAccount = (LinearLayout) findViewById(R.id.store_account);
+        assert  storeAccount != null;
+
+        storeAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override

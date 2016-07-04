@@ -60,4 +60,6 @@
     <string name="delete_past_cart_subtitle">¿Estás seguro de que deseas eliminar un carrito antiguo?\n Esta operación no se puede deshacer</string>
     <string name="delete_past_cart_loading" >Eliminando carrito…</string>
     <string name="past_cart_delete_ok" >Carrito eliminado correctamente</string>
+    <string name="store_account">Cuenta</string>
+    <string name="store_account_desc">Almacenar datos de la cuenta</string>
 </resources>
