@@ -57,8 +57,14 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                 // Create a new device item
                 DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress());
                 // Add it to our adapter
-                deviceItemList.add(newDevice);
-                mAdapter.notifyDataSetChanged();
+                if(!deviceItemList.contains(newDevice)) {
+                    deviceItemList.add(newDevice);
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         }
     };
@@ -271,6 +277,9 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
         this.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
                 BTAdapter.cancelDiscovery();
                 DeviceItem device = (DeviceItem) parent.getItemAtPosition(position);
                 Log.d("DEVICELIST", "DEVICE ITEM CLICKED: " + device.getDeviceName());
@@ -281,8 +290,6 @@ public class BluetoothScreen extends ListActivity implements ConnectDialog.Conne
                 bluetoothDialog.show(fm, "Connect dialog");
             }
         });
-
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

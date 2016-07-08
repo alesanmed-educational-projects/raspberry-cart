@@ -20,4 +20,10 @@ public class DeviceItem {
         this.deviceName = name;
         this.address = address;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DeviceItem &&
+                ((DeviceItem) obj).getAddress().equals(this.getAddress());
+    }
 }

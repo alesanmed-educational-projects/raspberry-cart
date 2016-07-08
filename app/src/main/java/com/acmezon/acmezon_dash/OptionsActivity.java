@@ -8,20 +8,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.securepreferences.SecurePreferences;
 
-import java.io.FileOutputStream;
-import java.util.Map;
-
 public class OptionsActivity extends AppCompatActivity {
-    private final String FILENAME = "shopping_cart";
+    //private final String FILENAME = "shopping_cart";
     private final String ACTION_CLOSE = "com.acmezon.acmezon_dash.ACTION_CLOSE";
 
     @Override
@@ -37,7 +33,7 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void initListeners() {
-        LinearLayout createFile = (LinearLayout) findViewById(R.id.create_file);
+        /*LinearLayout createFile = (LinearLayout) findViewById(R.id.create_file);
         assert createFile != null;
 
         createFile.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +53,7 @@ public class OptionsActivity extends AppCompatActivity {
                         getString(R.string.cart_file_created),
                         Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         LinearLayout pastCarts = (LinearLayout) findViewById(R.id.past_carts);
         assert  pastCarts != null;

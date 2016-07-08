@@ -40,7 +40,7 @@
         android:layout_height="1dip"
         android:background="@android:color/darker_gray" />
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/create_file"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -71,14 +71,14 @@
         android:layout_below="@+id/create_file"
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/darker_gray" />-->
 
     <LinearLayout
         android:id="@+id/store_account"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hor_line_2"
+        android:layout_below="@+id/hor_line_1"
         android:background="?android:attr/selectableItemBackground"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
