@@ -189,6 +189,7 @@ public class LazyImageLoadAdapter extends BaseAdapter implements DialogInterface
                 return false;
             }
         });
+
         if(!activity.getClass().equals(CartPreviewActivity.class)) {
             holder.name.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
